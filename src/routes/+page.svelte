@@ -1,7 +1,7 @@
 <script>
-	import Authorization from './auth/+page.svelte'
+	// import Authorization from './auth/+page.svelte'
 </script>
 
-<Authorization />
+<!-- <Authorization /> -->
 
 <h1>Hello</h1>
