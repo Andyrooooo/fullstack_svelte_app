@@ -41,6 +41,7 @@
     "@auth/core": "^0.20.0",
     "@auth/sveltekit": "^0.5.2",
     "@floating-ui/dom": "1.5.4",
+    "dotenv": "^16.3.1",
     "highlight.js": "11.9.0"
   }
 }
