@@ -1,11 +1,16 @@
 import { SvelteKitAuth } from "@auth/sveltekit"
-// import GitHub from "@auth/core/providers/github"
 import GitHub from "@auth/sveltekit/providers/github"
+import { MongoDBAdapter } from "@auth/mongodb-adapter"
+import clientPromise from "$lib/mongodb/mongodb.client"
 
+if (!clientPromise) {
+  throw new Error("Client promise is undefined")
+}
+
+
+// import GitHub from "@auth/core/providers/github"
 // import { GITHUB_ID, GITHUB_SECRET } from "$env/static/private"
-
 // const githubConfig = { clientId: process.env.GITHUB_ID, clientSecret: process.env.GITHUB_SECRET }
- 
 // export const handle = SvelteKitAuth({
 //   providers: [GitHub(githubConfig)],
 // })
@@ -19,6 +24,7 @@ process.env.NODE_ENV === 'development' ? githubConfig = devGithubConfig : github
 
 export const handle = SvelteKitAuth({
   providers: [ 
-    GitHub(githubConfig)
-  ],
+    GitHub(githubConfig)],
+  adapter: MongoDBAdapter(clientPromise, {
+    databaseName: "DWDD3780"}),
 })
