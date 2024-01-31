@@ -17,14 +17,23 @@ if (!clientPromise) {
 
 
 let githubConfig
-const devGithubConfig = { clientId: process.env.GITHUB_DEV_ID, clientSecret: process.env.GITHUB_DEV_SECRET}
-const prodGithubConfig = { clientId: process.env.GITHUB_PROD_ID, clientSecret: process.env.GITHUB_PROD_SECRET}
+const devGithubConfig = { 
+  clientId: process.env.GITHUB_DEV_ID, 
+  clientSecret: process.env.GITHUB_DEV_SECRET,
+  allowDangerousEmailAccountLinking: true
+}
+const prodGithubConfig = { 
+  clientId: process.env.GITHUB_PROD_ID, 
+  clientSecret: process.env.GITHUB_PROD_SECRET,
+  allowDangerousEmailAccountLinking: true
+}
 process.env.NODE_ENV === 'development' ? githubConfig = devGithubConfig : githubConfig = prodGithubConfig
 
 
 export const handle = SvelteKitAuth({
   providers: [ 
-    GitHub(githubConfig)],
+    GitHub(githubConfig),
+  ],
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "DWDD3780"}),
 })
