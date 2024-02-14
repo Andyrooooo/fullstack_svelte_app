@@ -1,31 +1,19 @@
 
-import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb'
-
-const uri = process.env.MONGODB_URI || "mongodb://localhost:27017"
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri)
+import { ObjectId } from 'mongodb'
+import clientPromise from '$lib/mongodb/mongodb.client'
 
 export async function load() {
-    // declares the movie variable
-    // let movie
 
     let movies
+    let client
 
   try {
+    client = await clientPromise
     // Connect the client to the server
-    const movieDB =  client.db("sample_mflix")
+    const movieDB = client?.db("sample_mflix")
+    const moviesColl = movieDB?.collection("movies")
 
-    // Get the `movies` collection from the `sample_mflix` database
-    // const movieColl = movieDB.collection("movie")
-    const moviesColl = movieDB.collection("movies")
-
-    // Find a movie with the title "Back to the Future"
-    // movie = await moviesColl.findOne({ title: "Back to the Future" })
-    // const moviesArray = await moviesColl.find({ year: 2015, 'imdb.rating': { $gte: 9 } }).toArray()
-    // ^^^^^^ how can we do some filtering and sorting for the above array of data? 
-
-    const moviesArray = await moviesColl.find({
+    const moviesArray = await moviesColl?.find({
         $and: [
             { year: {$gte: 1920} }, 
             {'imdb.rating': {$gte: 8} },
@@ -33,24 +21,55 @@ export async function load() {
         ]
     }).toArray()
 
-    movies = moviesArray.map(movie => {
+    movies = moviesArray?.map(movie => {
         return { ...movie, _id: (movie._id as ObjectId).toString() }
     })
 
-    console.log(`movie List: ${moviesArray.length}`)
+    console.log(`movie List: ${moviesArray?.length}`)
   } finally {
     // closes the client connection
-    await client.close()
+    await client?.close()
   }
-    //   if (movie) {
-    //     // converts the ObjectId to a string as BSON because SvelteKit does not support ObjectId
-    //     movie = { ...movie, _id: (movie._id as ObjectId).toString() }
-    //   }
 
   return {
     // returns a 200 status code and the movie object
     status: 200,
-    // body: movie
     body: movies
   }
 }
+
+
+
+// export async function load() {
+//     // declares the movie variable
+//     let movie
+
+//   try {
+//     // Connect the client to the server
+//     const movieDB =  client.db("sample_mflix")
+
+//     // Get the `movies` collection from the `sample_mflix` database
+//     const movieColl = movieDB.collection("movie")
+
+
+//     // Find a movie with the title "Back to the Future"
+//     movie = await movieColl.findOne({ title: "Back to the Future" })
+//     // const moviesArray = await moviesColl.find({ year: 2015, 'imdb.rating': { $gte: 9 } }).toArray()
+//     // ^^^^^^ how can we do some filtering and sorting for the above array of data? 
+
+//   } finally {
+//     // closes the client connection
+//     await client.close()
+//   }
+
+// if (movie) {
+// // converts the ObjectId to a string as BSON because SvelteKit does not support ObjectId
+// movie = { ...movie, _id: (movie._id as ObjectId).toString() }
+// }
+
+//   return {
+//     // returns a 200 status code and the movie object
+//     status: 200,
+//     body: movie
+//   }
+// }
