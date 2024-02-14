@@ -30,7 +30,7 @@ const prodGithubConfig = {
 process.env.NODE_ENV === 'development' ? githubConfig = devGithubConfig : githubConfig = prodGithubConfig
 
 
-export const handle = SvelteKitAuth({
+export const {handle} = SvelteKitAuth({
   providers: [ 
     GitHub(githubConfig),
   ],

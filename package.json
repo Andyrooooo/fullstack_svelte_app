@@ -38,9 +38,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@auth/core": "^0.24.0",
-    "@auth/mongodb-adapter": "^2.1.0",
-    "@auth/sveltekit": "^0.10.0",
+    "@auth/core": "^0.26.3",
+    "@auth/mongodb-adapter": "^2.3.3",
+    "@auth/sveltekit": "^0.12.3",
     "@floating-ui/dom": "1.5.4",
     "dotenv": "^16.3.1",
     "highlight.js": "11.9.0",
