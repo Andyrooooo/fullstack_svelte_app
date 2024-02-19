@@ -1,5 +1,7 @@
 <script lang="ts">
 
+    import Navigation from '../navigation/+page.svelte'
+
     export let data: any
 
     // $: console.log(data.body)
@@ -12,7 +14,9 @@
 
 </script>
 
-<main class="p-4">
+<main class="">
+    <Navigation />
+    
     <h1 class="text-red-500">{data.body.length} Movies</h1>
     <div class="flex flex-wrap">
         {#each data.body as movie}
