@@ -42,7 +42,7 @@ export async function load() {
                 {'address.market': { $ne: "Oahu"}},
                 {'address.market': { $ne: "Kauai"}}
             ]
-        }).limit(100).toArray()
+        }).limit(50).toArray()
 
         // converts the object id to a string, and adds the image URL, and converts the bathrooms, price, security_deposit, extra_people, guests_included, and cleaning_fee to a float
         listings = await Promise.all((listingsArray || []).map(async (listing) => {

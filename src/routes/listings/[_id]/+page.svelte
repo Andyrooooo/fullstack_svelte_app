@@ -5,18 +5,94 @@
 
     export let data: any
 
-    // $: console.log(data?.body?)
+    $: console.log(data?.body)
 
     // helps us limit and show all amenities
-    let showCount = 5;
+    let showCount = 5
     function showAll() {
-        showCount = data?.body?.amenities.length;
+        showCount = data?.body?.amenities.length
+    }
+
+    let open = false
+    let review = false
+    function openReviews() {
+        open = true
+    }
+
+    function makeReview() {
+        review = true
     }
 </script>
 
-
-
+<!-- lets us sign out correctly -->
 {#if $page.data.session?.user}
+
+    <!-- opens up the reviews modal -->
+    <!-- revew opens the review form and close the reviews data -->
+    {#if open}
+        <div>
+            <!-- review container and header with the 'close' button -->
+            <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+                <div class="bg-primary-900 w-11/12 h-5/6 rounded-lg overflow-y-auto">
+                    <div class="shadow-sm">
+                        <div class="flex justify-between items-center p-4 bg-primary-800 shadow-md">
+                            {#if !review}
+                                <h2 class="text-2xl text-primary-200">{data?.body?.reviews.length} Reviews</h2>
+                            {:else}
+                                <h2 class="text-2xl text-primary-200">Add Review</h2>
+                            {/if}
+                            <button class="fa-solid fa-circle-xmark text-primary-200 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" 
+                            on:click={() => {
+                                open = false
+                                review = false
+                            }}></button>
+                        </div>
+                        {#if !review}
+                            <!-- text button to open the 'review form' -->
+                            <div class="flex justify-center items-center p-1 bg-primary-700 mb-4 ">
+                                {#if data?.body?.reviews.length === 0}
+                                    <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">There's no reviews yet, want to make a review?</button>
+                                {:else}
+                                    <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">Want to add your own review?</button>
+                                {/if}
+                            </div>
+                        {/if}
+                    </div>
+
+                    <!-- all the database reviews -->
+                    {#if !review}
+                        <div class="flex flex-col px-4">
+                            {#each data?.body?.reviews as review}
+                                <div class=" border border-b-primary-800 border-t-0 border-l-0 border-r-0 pb-4 mb-4">
+                                    <div class="">
+                                        <h2 class="text-primary-600">{review.reviewer_name}</h2>
+                                        <!-- <h2 class="text-primary-200">{review.date}</h2> -->
+                                    </div>
+                                    <p class="text-primary-200 font-light">{review.comments}</p>
+                                </div>
+                            {/each}
+                        </div>
+
+                        <!-- when review is true it adds the review form -->
+                        {:else if review}
+                            <form class="w-full h-full flex justify-center items-center" method="POST">
+                                <div class="w-full">
+                                    <div class="p-4">
+                                        <input class="w-full my-4 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-900" id="username" type="text" placeholder="Your Name..." required />
+                                        <textarea class="w-full my-4 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-900" id="username" placeholder="Your review..." required />
+                                        <div class="flex justify-center">
+                                            <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    {/if}
+    <!-- end of review modal -->
+
     <main class="">
 
         <Navigation />
@@ -51,9 +127,24 @@
                 </div>
 
                 <!-- rating -->
-                <div class="mx-4 pb-6 flex gap-2 items-center border border-b-primary-800 border-t-0 border-l-0 border-r-0">
+                <div class="mx-4 flex gap-2 items-center">
                     <i class="fa-solid fa-star"></i>
                     <h2 class="">{data?.body?.review_scores.review_scores_rating === undefined ? "No Rating" : data?.body?.review_scores.review_scores_rating}</h2>
+                </div>
+
+                <!-- {#if Array.isArray(data?.body?.reviews)}
+                        {#each data?.body?.reviews as review}
+                            <div class="mx-4 pb-6">
+                                <p class="text-primary-600">{review.date}</p>
+                                <p class="text-primary-600">{review.reviewer_name}</p>
+                                <p class="text-primary-600">{review.comments}</p>
+                            </div>
+                        {/each}
+                    {/if} -->
+
+                <div class="mx-4 flex pb-6 border border-b-primary-800 border-t-0 border-l-0 border-r-0">
+                    <p class="text-primary-600 pr-2">{data?.body?.reviews.length}</p>
+                    <button on:click={openReviews} class="underline hover:text-primary-500">Reviews</button>
                 </div>
 
                 <!-- host info -->
