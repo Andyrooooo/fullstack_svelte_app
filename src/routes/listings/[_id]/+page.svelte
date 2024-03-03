@@ -171,7 +171,7 @@
                         <!-- when review is true it adds the review form to sumbit a review -->
                     {:else if review}
                         <form class="w-full h-full flex justify-center items-center" method="POST">
-                            <div class="w-full">
+                            <div class="max-w-6/12">
                                 <div class="p-4">
                                     <!-- label and input elements for the users name -->
                                     <label for="name" class="text-primary-200 mt-4">Your Name</label>
