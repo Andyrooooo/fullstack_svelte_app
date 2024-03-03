@@ -2,10 +2,11 @@
     import Navigation from '../../navigation/+page.svelte'
     import Authorization from '../../auth/+page.svelte'
     import { page } from '$app/stores'
+    import { slide } from 'svelte/transition'
 
     export let data: any
 
-    $: console.log(data?.body)
+    // $: console.log(data?.body)
 
     // helps us limit and show all amenities
     let showCount = 5
@@ -13,14 +14,18 @@
         showCount = data?.body?.amenities.length
     }
 
-    let open = false
+    let open = true
     let review = false
+    let reviewBar = "mr-6"
+    let round = ""
     function openReviews() {
         open = true
     }
 
     function makeReview() {
         review = true
+        reviewBar = "mr-0"
+        round = "rounded-tr-lg"
     }
 </script>
 
@@ -34,22 +39,34 @@
             <!-- review container and header with the 'close' button -->
             <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-primary-900 w-11/12 h-5/6 rounded-lg overflow-y-auto">
-                    <div class="shadow-sm">
-                        <div class="flex justify-between items-center p-4 bg-primary-800 shadow-md">
+                    <div class="shadow-sm fixed w-11/12 ">
+                        <div class="flex justify-between items-center pl-4 py-4 {reviewBar} bg-primary-800 shadow-md rounded-tl-lg {round}">
                             {#if !review}
                                 <h2 class="text-2xl text-primary-200">{data?.body?.reviews.length} Reviews</h2>
                             {:else}
                                 <h2 class="text-2xl text-primary-200">Add Review</h2>
                             {/if}
-                            <button class="fa-solid fa-circle-xmark text-primary-200 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" 
-                            on:click={() => {
-                                open = false
-                                review = false
-                            }}></button>
+                            <div class="flex gap-8 items-center mr-4">
+                                <!-- when adding a review we have a button to go back to reviews -->
+                                {#if review}
+                                    <button class="fa-solid fa-arrow-left text-primary-700 bg-primary-200 rounded-lg hover:bg-primary-600 hover:text-primary-200 py-1 px-2 rounded-full" 
+                                    on:click={() => {
+                                        review = false
+                                        reviewBar = "mr-6"
+                                        round = ""
+                                    }}></button>
+                                {/if}
+                                <!-- button to exit reviews -->
+                                <button class="fa-solid fa-circle-xmark text-primary-200 rounded-lg hover:text-primary-600 text-2xl" 
+                                on:click={() => {
+                                    open = false
+                                    review = false
+                                }}></button>
+                            </div>
                         </div>
                         {#if !review}
                             <!-- text button to open the 'review form' -->
-                            <div class="flex justify-center items-center p-1 bg-primary-700 mb-4 ">
+                            <div class="flex justify-center items-center p-1 bg-primary-700 mb-4 mr-6">
                                 {#if data?.body?.reviews.length === 0}
                                     <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">There's no reviews yet, want to make a review?</button>
                                 {:else}
@@ -61,27 +78,112 @@
 
                     <!-- all the database reviews -->
                     {#if !review}
-                        <div class="flex flex-col px-4">
-                            {#each data?.body?.reviews as review}
-                                <div class=" border border-b-primary-800 border-t-0 border-l-0 border-r-0 pb-4 mb-4">
-                                    <div class="">
-                                        <h2 class="text-primary-600">{review.reviewer_name}</h2>
-                                        <!-- <h2 class="text-primary-200">{review.date}</h2> -->
+                        <div class="lg:flex mt-28">
+                            <div class="lg:basis-4/12 flex lg:flex-col px-4">
+                                <!-- scores for each listing -->
+                                    <div class="flex overflow-x-auto lg:block border border-b-primary-800 border-t-0 border-l-0 border-r-0 pb-4 mb-4 lg:border-0 w-full justify-center">
+
+                                        <!-- Accuracy section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 pr-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:pr-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-circle-check hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Accuracy</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_accuracy}</a>
+                                            <i class="fa-solid fa-circle-check block lg:hidden"></i>
+                                        </div>
+
+                                        <!-- cleanliness section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-hand-sparkles hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Cleanliness</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_cleanliness}</a>
+                                            <i class="fa-solid fa-hand-sparkles block lg:hidden"></i>
+                                        </div>
+
+                                        <!-- checkin section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-bell-concierge hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Checkin</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_checkin}</a>
+                                            <i class="fa-solid fa-bell-concierge block lg:hidden"></i>
+                                        </div>
+
+                                        <!-- communication section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-message hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Communication</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_communication}</a>
+                                            <i class="fa-solid fa-message block lg:hidden"></i>
+                                        </div>
+
+                                        <!-- location section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-earth-asia hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Location</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_location}</a>
+                                            <i class="fa-solid fa-earth-asia block lg:hidden"></i>
+                                        </div>
+
+                                        <!-- value section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-money-bill-wave hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Value</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_value}</a>
+                                            <i class="fa-solid fa-money-bill-wave block lg:hidden"></i>
+                                        </div>
+
+                                        <!-- rating section -->
+                                        <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
+                                            <div class="flex items-center">
+                                                <i class="fa-solid fa-tag hidden lg:text-xl lg:block pr-4"></i>
+                                                <p class="lg:text-xl lg:font-bold">Rating</p>
+                                            </div>
+                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_rating}</a>
+                                            <i class="fa-solid fa-tag block lg:hidden"></i>
+                                        </div>
                                     </div>
-                                    <p class="text-primary-200 font-light">{review.comments}</p>
-                                </div>
-                            {/each}
+                            </div>
+
+                            <div class="lg:basis-8/12 flex flex-col px-4">
+                                {#each data?.body?.reviews as review}
+                                    <div class=" border border-b-primary-800 border-t-0 border-l-0 border-r-0 pb-4 mb-4">
+                                        <div class="">
+                                            <h2 class="text-primary-600">{review.reviewer_name}</h2>
+                                            <!-- <h2 class="text-primary-200">{review.date}</h2> -->
+                                        </div>
+                                        <p class="text-primary-200 font-light">{review.comments}</p>
+                                    </div>
+                                {/each}
+                            </div>
                         </div>
 
-                        <!-- when review is true it adds the review form -->
+                        <!-- when review is true it adds the review form to sumbit a review -->
                         {:else if review}
                             <form class="w-full h-full flex justify-center items-center" method="POST">
                                 <div class="w-full">
                                     <div class="p-4">
-                                        <input class="w-full my-4 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-900" id="username" type="text" placeholder="Your Name..." required />
-                                        <textarea class="w-full my-4 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-900" id="username" placeholder="Your review..." required />
-                                        <div class="flex justify-center">
-                                            <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4">Submit</button>
+                                        <!-- label and input elements for the users name -->
+                                        <label for="name" class="text-primary-200 mt-4">Your Name</label>
+                                        <input id="name" class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
+
+                                        <!-- label and textarea elements for the users comment -->
+                                        <label for="comment" class="text-primary-200 mt-4">Comments</label>
+                                        <textarea class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" id="comment" placeholder="Your review..." required />
+
+                                        <!-- submit button -->
+                                        <div class="flex justify-center mt-4">
+                                            <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -157,7 +259,7 @@
                                 <p class="text-primary-600">Superhost</p>
                                 <p class="text-primary-600">&bull;</p>
                             {/if}
-                            <p class="text-primary-600">{data?.body?.host.host_total_listings_count > 1 ? data?.body?.host.host_total_listings_count + 'years hosting' : data?.body?.host.host_total_listings_count + ' year hosting'}</p>
+                            <p class="text-primary-600">{data?.body?.host.host_total_listings_count > 1 ? data?.body?.host.host_total_listings_count + ' years hosting' : data?.body?.host.host_total_listings_count + ' year hosting'}</p>
                         </div>
                     </div>
                 </div>
