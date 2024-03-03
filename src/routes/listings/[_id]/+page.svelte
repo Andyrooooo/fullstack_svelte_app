@@ -14,8 +14,8 @@
         showCount = data?.body?.amenities.length
     }
 
-    let open = true
-    let review = true
+    let open = false
+    let review = false
     let reviewBar = "mr-6"
     let round = ""
     function openReviews() {
