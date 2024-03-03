@@ -14,8 +14,8 @@
         showCount = data?.body?.amenities.length
     }
 
-    let open = false
-    let review = false
+    let open = true
+    let review = true
     let reviewBar = "mr-6"
     let round = ""
     function openReviews() {
@@ -170,21 +170,27 @@
 
                         <!-- when review is true it adds the review form to sumbit a review -->
                     {:else if review}
-                        <form class="w-full h-full flex justify-center items-center" method="POST">
+                        <form class="w-full h-full flex justify-center items-center p-4 " method="POST">
                             <div class="w-full">
-                                <div class="p-4">
-                                    <!-- label and input elements for the users name -->
-                                    <label for="name" class="text-primary-200 mt-4">Your Name</label>
-                                    <input name="name"  class="max-w-6/12 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
-
-                                    <!-- label and textarea elements for the users comment -->
-                                    <label for="comment" class="text-primary-200 mt-4">Comments</label>
-                                    <textarea name="comment"  class="max-w-6/12 h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
-
-                                    <!-- submit button -->
-                                    <div class="flex justify-center mt-4">
-                                        <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
+                                <!-- label and input elements for the users name -->
+                                <div class="flex justify-center">
+                                    <div class="w-full md:w-8/12 lg:w-6/12">
+                                        <label for="name" class="text-primary-200 mt-4">Your Name</label>
+                                        <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
                                     </div>
+                                </div>
+
+                                <!-- label and textarea elements for the users comment -->
+                                <div class="flex justify-center">
+                                    <div class="w-full md:w-8/12 lg:w-6/12">
+                                        <label for="comment" class="text-primary-200 mt-4">Comments</label>
+                                        <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
+                                    </div>
+                                </div>
+
+                                <!-- submit button -->
+                                <div class="flex justify-center mt-4">
+                                    <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
                                 </div>
                             </div>
                         </form>
