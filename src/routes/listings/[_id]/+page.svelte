@@ -171,15 +171,15 @@
                         <!-- when review is true it adds the review form to sumbit a review -->
                     {:else if review}
                         <form class="w-full h-full flex justify-center items-center" method="POST">
-                            <div class="max-w-6/12">
+                            <div class="w-full">
                                 <div class="p-4">
                                     <!-- label and input elements for the users name -->
                                     <label for="name" class="text-primary-200 mt-4">Your Name</label>
-                                    <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
+                                    <input name="name"  class="max-w-6/12 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
 
                                     <!-- label and textarea elements for the users comment -->
                                     <label for="comment" class="text-primary-200 mt-4">Comments</label>
-                                    <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
+                                    <textarea name="comment"  class="max-w-6/12 h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
 
                                     <!-- submit button -->
                                     <div class="flex justify-center mt-4">
