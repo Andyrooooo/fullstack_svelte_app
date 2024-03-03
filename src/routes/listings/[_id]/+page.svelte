@@ -15,7 +15,7 @@
     }
 
     let open = true
-    let review = false
+    let review = true
     let reviewBar = "mr-6"
     let round = ""
     function openReviews() {
@@ -169,25 +169,25 @@
                         </div>
 
                         <!-- when review is true it adds the review form to sumbit a review -->
-                        {:else if review}
-                            <form class="w-full h-full flex justify-center items-center" method="POST">
-                                <div class="w-full">
-                                    <div class="p-4">
-                                        <!-- label and input elements for the users name -->
-                                        <label for="name" class="text-primary-200 mt-4">Your Name</label>
-                                        <input id="name" class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
+                    {:else if review}
+                        <form class="w-full h-full flex justify-center items-center" method="POST">
+                            <div class="w-full">
+                                <div class="p-4">
+                                    <!-- label and input elements for the users name -->
+                                    <label for="name" class="text-primary-200 mt-4">Your Name</label>
+                                    <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
 
-                                        <!-- label and textarea elements for the users comment -->
-                                        <label for="comment" class="text-primary-200 mt-4">Comments</label>
-                                        <textarea class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" id="comment" placeholder="Your review..." required />
+                                    <!-- label and textarea elements for the users comment -->
+                                    <label for="comment" class="text-primary-200 mt-4">Comments</label>
+                                    <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
 
-                                        <!-- submit button -->
-                                        <div class="flex justify-center mt-4">
-                                            <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
-                                        </div>
+                                    <!-- submit button -->
+                                    <div class="flex justify-center mt-4">
+                                        <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
                                     </div>
                                 </div>
-                            </form>
+                            </div>
+                        </form>
                     {/if}
                 </div>
             </div>
@@ -273,7 +273,7 @@
 
                         <!-- limits the amount of visible amenities -->
                         {#each data?.body?.amenities.slice(0, showCount) as amenity}
-                            <p class="text-primary-600">{amenity}</p>
+                            <p transition:slide|global class="text-primary-600">{amenity}</p>
                         {/each}
                         {#if showCount < data?.body?.amenities.length}
                             <button class="w-full mt-4 py-2 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" on:click={showAll}>Show All</button>

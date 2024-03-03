@@ -81,3 +81,11 @@ export async function load({ params }) {
         body: listing
     }
 }
+
+export const actions = {
+    default: async ({ request }) => {
+        const data = await request.formData()
+        console.log(data.get('name'))
+        console.log(data.get('comment'))
+    }
+}
