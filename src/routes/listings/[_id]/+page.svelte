@@ -3,8 +3,14 @@
     import Authorization from '../../auth/+page.svelte'
     import { page } from '$app/stores'
     import { slide } from 'svelte/transition'
+    import { Ratings } from '@skeletonlabs/skeleton'
 
     export let data: any
+
+    let currentRating
+
+
+    let isHovered = false
 
     // $: console.log(data?.body)
 
@@ -14,8 +20,8 @@
         showCount = data?.body?.amenities.length
     }
 
-    let open = false
-    let review = false
+    let open = true
+    let review = true
     let reviewBar = "mr-6"
     let round = ""
     function openReviews() {
@@ -27,6 +33,35 @@
         reviewBar = "mr-0"
         round = "rounded-tr-lg"
     }
+
+    let rating = {
+        current: 3,
+        max: 6
+    }
+
+    function whichIcon(index) {
+        rating.current = index
+    }
+
+    function setRating(index) {
+        rating.current = index
+        increment()
+    }
+
+    function increment() {
+        currentRating = rating.current + 1
+        console.log(currentRating)
+    }
+
+    function getStarType(index) {
+    if (index <= rating.current) {
+        return 'full';
+    } else {
+        return 'empty';
+    }
+
+
+}
 </script>
 
 <!-- lets us sign out correctly -->
@@ -170,21 +205,35 @@
 
                         <!-- when review is true it adds the review form to sumbit a review -->
                     {:else if review}
-                        <form class="w-full h-full flex justify-center items-center p-4 " method="POST">
+                        <form class="w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
                             <div class="w-full">
                                 <!-- label and input elements for the users name -->
                                 <div class="flex justify-center">
                                     <div class="w-full md:w-8/12 lg:w-6/12">
                                         <label for="name" class="text-primary-200 mt-4">Your Name</label>
-                                        <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
+                                        <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
                                     </div>
                                 </div>
+
+                                <!-- Star rating which allows you to hover over the star and also select the star to get the value -->
+                                <div class="rating flex justify-center gap-4 my-8" >
+                                    {#each Array(rating.max) as _, index (index)}
+                                        <div class="star" on:mouseenter={() => whichIcon(index)} on:click={() => setRating(index)} >
+                                            {#if getStarType(index) === 'full'}
+                                                <i class="fa-solid fa-star text-2xl"></i>
+                                            {:else}
+                                                <i class="fa-regular fa-star text-2xl"></i>
+                                            {/if}
+                                        </div>
+                                    {/each}
+                                </div>
+
 
                                 <!-- label and textarea elements for the users comment -->
                                 <div class="flex justify-center">
                                     <div class="w-full md:w-8/12 lg:w-6/12">
-                                        <label for="comment" class="text-primary-200 mt-4">Comments</label>
-                                        <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-700 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
+                                        <label for="comment" class="text-primary-200">Comments</label>
+                                        <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
                                     </div>
                                 </div>
 
@@ -321,4 +370,8 @@
 {/if}
 
 
-
+<style>
+    .iconShadow {
+        text-shadow: 1px 1px 0px rgb(167 243 208), -1px -1px 0px rgb(167 243 208);
+    }
+</style>

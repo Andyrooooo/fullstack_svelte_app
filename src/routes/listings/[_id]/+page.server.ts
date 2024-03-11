@@ -83,7 +83,7 @@ export async function load({ params }) {
 }
 
 export const actions = {
-    default: async ({ request }) => {
+    submitForm: async ({ request }) => {
         const data = await request.formData()
         console.log(data.get('name'))
         console.log(data.get('comment'))
