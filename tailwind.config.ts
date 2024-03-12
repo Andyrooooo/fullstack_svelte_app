@@ -8,7 +8,12 @@ export default {
 	darkMode: 'class',
 	content: ['./src/**/*.{html,js,svelte,ts}', join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')],
 	theme: {
-		extend: {},
+		extend: {
+			fontSize: {
+				'2xs': '0.625rem', // 10px
+				'3xs': '0.5rem', // 8px
+			},
+		},
 	},
 	plugins: [
 		forms,
@@ -21,6 +26,7 @@ export default {
 						enhancements: true,
 					},
 				],
+				
 			},
 		}),
 	],

@@ -3,13 +3,18 @@
     import Authorization from '../../auth/+page.svelte'
     import { page } from '$app/stores'
     import { slide } from 'svelte/transition'
+    import Modal from './formModal.svelte'
 
+    let formModal = false
     export let data: any
     export let form: any
-    $: console.log(form?.body)
-
-    // $: console.log(data?.body)
+    // when we get the response if there is a body then we can open the modal and is not undefined
+    if (form?.body != undefined) {
+        formModal = true
+    }
     let currentRating = 0
+    // $: console.log(form?.body)
+    // $: console.log(data?.body)
 
     // helps us limit and show all amenities
     let showCount = 5
@@ -17,8 +22,8 @@
         showCount = data?.body?.amenities.length
     }
 
-    let open = true
-    let review = true
+    let open = false
+    let review = false
     let reviewBar = "mr-6"
     let round = ""
     function openReviews() {
@@ -50,7 +55,7 @@
     function increment() {
         currentRating = rating.current + 1
         rating.current = currentRating - 1
-        console.log(currentRating)
+        // console.log(currentRating)
     }
 
     /* gives us the full or empty star icon */
@@ -60,8 +65,10 @@
     } else {
         return 'empty';
     }
+}
 
-
+function closeTheModal() {
+    formModal = false
 }
 </script>
 
@@ -111,9 +118,15 @@
                             <!-- text button to open the 'review form' -->
                             <div class="flex justify-center items-center p-1 bg-primary-700 mb-4 mr-6">
                                 {#if data?.body?.reviews.length === 0}
-                                    <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">There's no reviews yet, want to make a review?</button>
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-pencil mr-2"></i>
+                                        <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">There's no reviews yet, want to make a review?</button>
+                                    </div>
                                 {:else}
-                                    <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">Want to add your own review?</button>
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-pencil mr-2"></i>
+                                        <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">Want to add your own review?</button>
+                                    </div>
                                 {/if}
                             </div>
                         {/if}
@@ -204,6 +217,14 @@
                                         <div class="">
                                             <h2 class="text-primary-600">{review.reviewer_name}</h2>
                                             <!-- <h2 class="text-primary-200">{review.date}</h2> -->
+                                            <!-- stars for new review -->
+                                            {#if review.rating}
+                                                <div class="flex gap-1 my-1">
+                                                    {#each Array(review.rating) as _, index (index)}
+                                                        <i class="fa-solid fa-star text-primary-200 text-3xs"></i>
+                                                    {/each}
+                                                </div>
+                                            {/if}
                                         </div>
                                         <p class="text-primary-200 font-light">{review.comments}</p>
                                     </div>
@@ -214,11 +235,9 @@
                         <!-- when review is true it adds the review form to sumbit a review -->
                     {:else if review}
 
-                        {#if form?.error}
-                            <p class="text-red-400">{form.error}</p>
-                        {/if}
+                        
 
-                        <form class="w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
+                        <form class=" w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
                             <div class="w-full">
                                 <!-- label and input elements for the users name -->
                                 <!-- <div class="flex justify-center">
@@ -263,6 +282,16 @@
                                 </div>
                             </div>
                         </form>
+
+                        <!-- error message when any data comes back without needed data -->
+                        {#if form?.error}
+                            <div class="absolute z-10 flex justify-center items center top-36 left-0 w-full">
+                                <div class="bg-red-50 w-full md:w-7/12 lg:w-5/12 border-red-400 border rounded-lg mx-10 shadow-lg flex">
+                                    <p class="text-red-400 pl-4 py-4 pr-1">Error:</p>
+                                    <p class="text-black py-4 pr-4">{form.error}</p>
+                                </div>
+                            </div>
+                        {/if}
                     {/if}
                 </div>
             </div>
@@ -271,6 +300,10 @@
     <!-- end of review modal -->
 
     <main class="">
+        <!-- Modal that will show when the form is submitted and has data and passes all the checks -->  
+        {#if formModal}
+            <Modal on:closeModal={closeTheModal}/>
+        {/if}
 
         <Navigation />
 

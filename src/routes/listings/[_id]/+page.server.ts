@@ -89,6 +89,7 @@ async function getUserId(user: string) {
     try {
         client = await clientPromise
         const userCollection = client?.db("DWDD3780").collection("users")
+        // const userCollection = client?.db("DWDD3780")
         const existingUser = await userCollection?.findOne({ name: user })
         if (!existingUser) {
             throw new Error("User does not exist")
@@ -106,6 +107,8 @@ async function getListingId(listingName: string) {
         client = await clientPromise
         const airBNBDB = client?.db("sample_airbnb")
         const listNRevColl = airBNBDB?.collection("listingsAndReviews")
+        // extra code to test if error handling is working
+        // const listNRevColl = airBNBDB?.collection("listings")
         const listing = await listNRevColl?.findOne({ name: listingName })
         if (!listing) {
             throw new Error("Listing does not exist")
@@ -117,7 +120,9 @@ async function getListingId(listingName: string) {
     
 }
 
+// checks the user, rating, comment, and listing name to see if they are valid
 async function getReview(user: string, rating: number, comment: string, listingName: string) {
+    let client
     if (user === '') {
         throw new Error("Username is required")
     } 
@@ -130,6 +135,29 @@ async function getReview(user: string, rating: number, comment: string, listingN
     // add a review to the database
     const userId = await getUserId(user)
     const listingId = await getListingId(listingName)
+    // console.log(userId, listingId, rating, comment, listingName, user)
+
+    try {
+        /* ----------------- we add review to class database here ------------------------------ */
+        client = await clientPromise
+        const reviewCollection = client?.db("DWDD3780").collection("reviews")
+        // adds the review to my class database with the user id, rating, comment and listing name. The user property will show as user and the listing will show as listingName
+        await reviewCollection?.insertOne({ user: userId, rating, comment, listingName: listingId })
+
+        /* ----------------- we add review to AirBnB database here ------------------------------ */
+        const newReview = client?.db("sample_airbnb").collection("listingsAndReviews")
+        await newReview?.updateOne(
+            {_id: listingId},
+            // userId was turned into a string to prevent errors, but is still identifiable and shows as normal in class database
+            // also changes property name to match current document structure
+            // will show your name as well for review to be seen in reviews
+            {$push: {reviews: {listing_id: String(listingId), reviewer_id: String(`ObjectId(${userId})`), reviewer_name: user, comments: comment, rating}}}
+        )
+        // listing id: 10140368    _id: "10140368"
+
+    } catch (error) {
+        throw new Error('Failed to add review')
+    }
 }
 
 // function which will grab our form data
@@ -152,12 +180,10 @@ export const actions = {
                 body: { message: 'Review added successfully' }
             }
         } catch (error) {
-            if (error instanceof Error ) 
+            if (error instanceof Error) 
             return fail(422, {
-                message: error.message
+                error: error.message
             })
         }
     }
 }
-
-// we are at 28:08 of the last video
