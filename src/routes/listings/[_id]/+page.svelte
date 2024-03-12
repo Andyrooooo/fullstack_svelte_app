@@ -3,16 +3,13 @@
     import Authorization from '../../auth/+page.svelte'
     import { page } from '$app/stores'
     import { slide } from 'svelte/transition'
-    import { Ratings } from '@skeletonlabs/skeleton'
 
     export let data: any
-
-    let currentRating
-
-
-    let isHovered = false
+    export let form: any
+    $: console.log(form?.body)
 
     // $: console.log(data?.body)
+    let currentRating = 0
 
     // helps us limit and show all amenities
     let showCount = 5
@@ -39,10 +36,12 @@
         max: 6
     }
 
+    /* gives us the amount of icons to highlight based on index */
     function whichIcon(index) {
         rating.current = index
     }
 
+    /* tells us how many stars were clicked using index, to get it to show the correct value in the console we had to add a secondary function increment to a different variable because of mouseover and click*/
     function setRating(index) {
         rating.current = index
         increment()
@@ -50,9 +49,11 @@
 
     function increment() {
         currentRating = rating.current + 1
+        rating.current = currentRating - 1
         console.log(currentRating)
     }
 
+    /* gives us the full or empty star icon */
     function getStarType(index) {
     if (index <= rating.current) {
         return 'full';
@@ -77,9 +78,16 @@
                     <div class="shadow-sm fixed w-11/12 ">
                         <div class="flex justify-between items-center pl-4 py-4 {reviewBar} bg-primary-800 shadow-md rounded-tl-lg {round}">
                             {#if !review}
-                                <h2 class="text-2xl text-primary-200">{data?.body?.reviews.length} Reviews</h2>
+                                <div class="flex font-bold">
+                                    <p class="text-primary-200 mr-1 hidden md:block">{data?.body?.name} -</p>
+                                    <p class="text-primary-600 mr-1">{data?.body?.reviews.length}</p>
+                                    <p>Reviews</p>
+                                </div>
                             {:else}
-                                <h2 class="text-2xl text-primary-200">Add Review</h2>
+                                <div class="flex font-bold">
+                                    <p class="text-primary-200 mr-1 hidden md:block">{data?.body?.name} -</p>
+                                    <p class="text-primary-200">Add a Review</p>
+                                </div>
                             {/if}
                             <div class="flex gap-8 items-center mr-4">
                                 <!-- when adding a review we have a button to go back to reviews -->
@@ -124,7 +132,7 @@
                                                 <i class="fa-solid fa-circle-check hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Accuracy</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_accuracy}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_accuracy}</p>
                                             <i class="fa-solid fa-circle-check block lg:hidden"></i>
                                         </div>
 
@@ -134,7 +142,7 @@
                                                 <i class="fa-solid fa-hand-sparkles hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Cleanliness</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_cleanliness}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_cleanliness}</p>
                                             <i class="fa-solid fa-hand-sparkles block lg:hidden"></i>
                                         </div>
 
@@ -144,7 +152,7 @@
                                                 <i class="fa-solid fa-bell-concierge hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Checkin</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_checkin}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_checkin}</p>
                                             <i class="fa-solid fa-bell-concierge block lg:hidden"></i>
                                         </div>
 
@@ -154,7 +162,7 @@
                                                 <i class="fa-solid fa-message hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Communication</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_communication}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_communication}</p>
                                             <i class="fa-solid fa-message block lg:hidden"></i>
                                         </div>
 
@@ -164,7 +172,7 @@
                                                 <i class="fa-solid fa-earth-asia hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Location</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_location}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_location}</p>
                                             <i class="fa-solid fa-earth-asia block lg:hidden"></i>
                                         </div>
 
@@ -174,7 +182,7 @@
                                                 <i class="fa-solid fa-money-bill-wave hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Value</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_value}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_value}</p>
                                             <i class="fa-solid fa-money-bill-wave block lg:hidden"></i>
                                         </div>
 
@@ -184,7 +192,7 @@
                                                 <i class="fa-solid fa-tag hidden lg:text-xl lg:block pr-4"></i>
                                                 <p class="lg:text-xl lg:font-bold">Rating</p>
                                             </div>
-                                            <a class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_rating}</a>
+                                            <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_rating}</p>
                                             <i class="fa-solid fa-tag block lg:hidden"></i>
                                         </div>
                                     </div>
@@ -205,24 +213,36 @@
 
                         <!-- when review is true it adds the review form to sumbit a review -->
                     {:else if review}
+
+                        {#if form?.error}
+                            <p class="text-red-400">{form.error}</p>
+                        {/if}
+
                         <form class="w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
                             <div class="w-full">
                                 <!-- label and input elements for the users name -->
-                                <div class="flex justify-center">
+                                <!-- <div class="flex justify-center">
                                     <div class="w-full md:w-8/12 lg:w-6/12">
                                         <label for="name" class="text-primary-200 mt-4">Your Name</label>
                                         <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
                                     </div>
-                                </div>
+                                </div> -->
+
+                                <input name="user" id="user" type="hidden" value={$page.data.session?.user?.name}/>
+                                <input name="rating" id="rating" type="hidden" value={currentRating}/>
+                                <input name="listingName" id="listingName" type="hidden" value={data?.body?.name}/>
 
                                 <!-- Star rating which allows you to hover over the star and also select the star to get the value -->
-                                <div class="rating flex justify-center gap-4 my-8" >
+                                <!-- This is done using mouseenter and grabbing the index and same with the rating when clicked -->
+                                <div class="flex justify-center gap-4 mb-8">
                                     {#each Array(rating.max) as _, index (index)}
+                                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                                        <!-- svelte-ignore a11y-no-static-element-interactions -->
                                         <div class="star" on:mouseenter={() => whichIcon(index)} on:click={() => setRating(index)} >
                                             {#if getStarType(index) === 'full'}
-                                                <i class="fa-solid fa-star text-2xl"></i>
+                                                <i class="fa-solid fa-star text-3xl"></i>
                                             {:else}
-                                                <i class="fa-regular fa-star text-2xl"></i>
+                                                <i class="fa-regular fa-star text-3xl"></i>
                                             {/if}
                                         </div>
                                     {/each}
@@ -237,7 +257,7 @@
                                     </div>
                                 </div>
 
-                                <!-- submit button -->
+                                <!-- submit and cancel button -->
                                 <div class="flex justify-center mt-4">
                                     <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
                                 </div>
@@ -344,6 +364,7 @@
                 <!-- button and pricing bar on large -->
                 <div class="w-full mb-4">
                     <div class="hidden lg:flex bg-primary-900 py-4 justify-between shadow-lg items-center mx-4 rounded-lg">
+                        <!-- svelte-ignore a11y-missing-attribute -->
                         <p class="mx-4"><a class=" text-lg">${data?.body?.price}.00</a> night</p>
             
                         <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" 
@@ -357,6 +378,7 @@
         <!-- button and pricing bar on small and medium -->
         <div>
             <div class="lg:hidden bg-primary-900 py-4 flex justify-between fixed bottom-0 w-full shadow-lg items-center">
+                <!-- svelte-ignore a11y-missing-attribute -->
                 <p class="mx-4"><a class=" text-lg">${data?.body?.price}.00</a> night</p>
 
                 <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" 
@@ -368,10 +390,3 @@
 {:else}
     <Authorization />
 {/if}
-
-
-<style>
-    .iconShadow {
-        text-shadow: 1px 1px 0px rgb(167 243 208), -1px -1px 0px rgb(167 243 208);
-    }
-</style>

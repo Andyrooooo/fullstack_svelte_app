@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
 import clientPromise from '$lib/mongodb/mongodb.client'
+import { fail } from '@sveltejs/kit'
 
 
 // sets default image if the image URL is invalid
@@ -30,7 +31,7 @@ async function validateHostImg(url: string): Promise<string | null> {
     }
 }
 
-
+/* load Params function */
 export async function load({ params }) {
     const listingId = params._id
 
@@ -82,10 +83,81 @@ export async function load({ params }) {
     }
 }
 
+
+async function getUserId(user: string) {
+    let client
+    try {
+        client = await clientPromise
+        const userCollection = client?.db("DWDD3780").collection("users")
+        const existingUser = await userCollection?.findOne({ name: user })
+        if (!existingUser) {
+            throw new Error("User does not exist")
+        }
+        return existingUser?._id
+    } catch (error) {
+        throw new Error('Failed to get user id')
+    }
+    
+}
+
+async function getListingId(listingName: string) {
+    let client
+    try {
+        client = await clientPromise
+        const airBNBDB = client?.db("sample_airbnb")
+        const listNRevColl = airBNBDB?.collection("listingsAndReviews")
+        const listing = await listNRevColl?.findOne({ name: listingName })
+        if (!listing) {
+            throw new Error("Listing does not exist")
+        }
+        return listing?._id
+    } catch (error) {
+        throw new Error('Failed to get listing id')
+    }
+    
+}
+
+async function getReview(user: string, rating: number, comment: string, listingName: string) {
+    if (user === '') {
+        throw new Error("Username is required")
+    } 
+    if (comment === '') {
+        throw new Error("Comment is required")
+    } 
+    if (listingName === '') {
+        throw new Error("Listing name is required")
+    }
+    // add a review to the database
+    const userId = await getUserId(user)
+    const listingId = await getListingId(listingName)
+}
+
+// function which will grab our form data
 export const actions = {
     submitForm: async ({ request }) => {
         const data = await request.formData()
-        console.log(data.get('name'))
-        console.log(data.get('comment'))
+        // console.log(data.get('user'), typeof(data.get('user')))
+        // console.log(data.get('rating'), typeof(data.get('rating')))
+        // console.log(data.get('comment'), typeof(data.get('comment')))
+        // console.log(data.get("listingName"), typeof(data.get("listingName")))
+        const rating = data.get('rating')
+        const user = data.get('user') as string
+        const comment = data.get('comment') as string
+        const listingName = data.get('listingName') as string
+
+        try {
+            await getReview(user, Number(rating), comment, listingName)
+            return {
+                status: 200,
+                body: { message: 'Review added successfully' }
+            }
+        } catch (error) {
+            if (error instanceof Error ) 
+            return fail(422, {
+                message: error.message
+            })
+        }
     }
 }
+
+// we are at 28:08 of the last video
