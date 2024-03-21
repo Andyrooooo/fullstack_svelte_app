@@ -214,19 +214,41 @@ function closeTheModal() {
                             <div class="lg:basis-8/12 flex flex-col px-4">
                                 {#each data?.body?.reviews as review}
                                     <div class=" border border-b-primary-800 border-t-0 border-l-0 border-r-0 pb-4 mb-4">
-                                        <div class="">
-                                            <h2 class="text-primary-600">{review.reviewer_name}</h2>
-                                            <!-- <h2 class="text-primary-200">{review.date}</h2> -->
-                                            <!-- stars for new review -->
-                                            {#if review.rating}
-                                                <div class="flex gap-1 my-1">
-                                                    {#each Array(review.rating) as _, index (index)}
-                                                        <i class="fa-solid fa-star text-primary-200 text-3xs"></i>
-                                                    {/each}
+                                        <!-- users image that gets displayed with the review -->
+                                        <div class="lg:flex lg:gap-4">
+                                            <div class="lg:basis-1/12 lg:flex lg:justify-center">
+                                                {#if review.userImage}
+                                                    <img src={review.userImage} class="rounded-full w-14 h-14" />
+                                                {:else if !review.userImage}
+                                                    <img src="/default-review.jpg" class="rounded-full w-14 h-14" />
+                                                {/if}
+                                            </div>
+
+                                            <div class="lg:basis-11/12">
+                                                <!-- date that will be displayed with the review -->
+                                                <div class="">
+                                                    <div class="flex items-center">
+                                                        <h2 class="text-primary-600">{review.reviewer_name}</h2>
+                                                        {#if review.date}
+                                                            <p class="text-primary-300 text-2xs ml-2">&bull;</p>
+                                                            <p class="text-primary-300 text-2xs ml-2">{review.date.toString().substring(3,7)}</p>
+                                                            <p class="text-primary-300 text-2xs ml-1">{review.date.toString().substring(11,15)}</p>
+                                                        {/if}
+                                                    </div>
+                                                    <!-- <h2 class="text-primary-200">{review.date}</h2> -->
+                                                    <!-- stars for new review -->
+                                                    {#if review.rating}
+                                                        <div class="flex gap-1 my-1">
+                                                            {#each Array(review.rating) as _, index (index)}
+                                                                <i class="fa-solid fa-star text-primary-200 text-3xs"></i>
+                                                            {/each}
+                                                        </div>
+                                                    {/if}
                                                 </div>
-                                            {/if}
+                                                <!-- comments for the review -->
+                                                <p class="text-primary-200 font-light">{review.comments}</p>
+                                            </div>
                                         </div>
-                                        <p class="text-primary-200 font-light">{review.comments}</p>
                                     </div>
                                 {/each}
                             </div>
@@ -248,8 +270,10 @@ function closeTheModal() {
                                 </div> -->
 
                                 <input name="user" id="user" type="hidden" value={$page.data.session?.user?.name}/>
+                                <input name="userImage" id="user" type="hidden" value={$page.data.session?.user?.image}/>
                                 <input name="rating" id="rating" type="hidden" value={currentRating}/>
                                 <input name="listingName" id="listingName" type="hidden" value={data?.body?.name}/>
+                                <input name="date" id="date" type="hidden" value={new Date()}/>
 
                                 <!-- Star rating which allows you to hover over the star and also select the star to get the value -->
                                 <!-- This is done using mouseenter and grabbing the index and same with the rating when clicked -->

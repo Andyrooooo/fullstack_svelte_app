@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import clientPromise from '$lib/mongodb/mongodb.client'
 import { fail } from '@sveltejs/kit'
+import type { as } from 'vitest/dist/reporters-qc5Smpt5.js'
 
 
 // sets default image if the image URL is invalid
@@ -28,6 +29,20 @@ async function validateHostImg(url: string): Promise<string | null> {
         }
     } catch (error) {
         return '/default-host.jpg'
+    }
+}
+
+// sets default reviewer image if the image URL is invalid
+async function validateReviewerImg(url: string): Promise<string | null> {
+    try {
+        const response = await fetch(url, { method: 'HEAD' })
+        if (response.ok) {
+            return url
+        } else {
+            return '/default-review.jpg'
+        }
+    } catch (error) {
+        return '/default-review.jpg'
     }
 }
 
@@ -63,7 +78,8 @@ export async function load({ params }) {
                 guests_included: listing.guests_included ? parseFloat(listing.guests_included.toString()) : 0,
                 cleaning_fee: listing.cleaning_fee ? parseFloat(listing.cleaning_fee.toString()) : 0,
                 image: await validateImageURL(listing.images.picture_url),
-                hostIMG: await validateHostImg(listing.host.host_thumbnail_url)
+                hostIMG: await validateHostImg(listing.host.host_thumbnail_url),
+                userImage: await validateReviewerImg(listing.reviews.userImage)
             }
         }
     } catch (error) {
@@ -84,6 +100,7 @@ export async function load({ params }) {
 }
 
 
+// function to get the user id from the database
 async function getUserId(user: string) {
     let client
     try {
@@ -101,6 +118,7 @@ async function getUserId(user: string) {
     
 }
 
+// function to get the listing id from the database
 async function getListingId(listingName: string) {
     let client
     try {
@@ -121,7 +139,7 @@ async function getListingId(listingName: string) {
 }
 
 // checks the user, rating, comment, and listing name to see if they are valid
-async function getReview(user: string, rating: number, comment: string, listingName: string) {
+async function getReview(user: string, rating: number, comment: string, listingName: string, userImage: string, date: string) {
     let client
     if (user === '') {
         throw new Error("Username is required")
@@ -142,7 +160,7 @@ async function getReview(user: string, rating: number, comment: string, listingN
         client = await clientPromise
         const reviewCollection = client?.db("DWDD3780").collection("reviews")
         // adds the review to my class database with the user id, rating, comment and listing name. The user property will show as user and the listing will show as listingName
-        await reviewCollection?.insertOne({ user: userId, rating, comment, listingName: listingId })
+        await reviewCollection?.insertOne({ user: userId, rating, comment, listingName: listingId, userImage, date})
 
         /* ----------------- we add review to AirBnB database here ------------------------------ */
         const newReview = client?.db("sample_airbnb").collection("listingsAndReviews")
@@ -151,7 +169,7 @@ async function getReview(user: string, rating: number, comment: string, listingN
             // userId was turned into a string to prevent errors, but is still identifiable and shows as normal in class database
             // also changes property name to match current 'listingAndReviews' document structure
             // will show your name as well for review to be seen in reviews
-            {$push: {reviews: {listing_id: String(listingId), reviewer_id: String(`ObjectId(${userId})`), reviewer_name: user, comments: comment, rating}}}
+            {$push: {reviews: {listing_id: String(listingId), reviewer_id: String(`ObjectId(${userId})`), reviewer_name: user, comments: comment, rating, date: date, userImage: userImage}}}
         )
         // listing id: 10140368    _id: "10140368"
 
@@ -172,9 +190,12 @@ export const actions = {
         const user = data.get('user') as string
         const comment = data.get('comment') as string
         const listingName = data.get('listingName') as string
+        const userImage = data.get('userImage') as string
+        const date = data.get('date') as string
+        // console.log(user, rating, comment, listingName, userImage, date)
 
         try {
-            await getReview(user, Number(rating), comment, listingName)
+            await getReview(user, Number(rating), comment, listingName, userImage, date)
             return {
                 status: 200,
                 body: { message: 'Review added successfully' }
