@@ -8,7 +8,7 @@
     let formModal = false
     export let data: any
     export let form: any
-    // when we get the response if there is a body then we can open the modal and is not undefined
+    // when we get the response if there is a body and is not undefined then we can open the modal 
     if (form?.body != undefined) {
         formModal = true
     }
@@ -24,7 +24,7 @@
 
     let open = false
     let review = false
-    let reviewBar = "mr-6"
+    let reviewBar = "w-[87%] min-[500px]:w-[88%] md:w-[89.7%] lg:w-[90.2%]"
     let round = ""
     function openReviews() {
         open = true
@@ -32,7 +32,7 @@
 
     function makeReview() {
         review = true
-        reviewBar = "mr-0"
+        reviewBar = "w-11/12"
         round = "rounded-tr-lg"
     }
 
@@ -82,8 +82,8 @@ function closeTheModal() {
             <!-- review container and header with the 'close' button -->
             <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-primary-900 w-11/12 h-5/6 rounded-lg overflow-y-auto">
-                    <div class="shadow-sm fixed w-11/12 ">
-                        <div class="flex justify-between items-center pl-4 py-4 {reviewBar} bg-primary-800 shadow-md rounded-tl-lg {round}">
+                    <div class="fixed {reviewBar}">
+                        <div class="flex justify-between items-center pl-4 py-4 bg-primary-800 shadow-md rounded-tl-lg {round}">
                             {#if !review}
                                 <div class="flex font-bold">
                                     <p class="text-primary-200 mr-1 hidden md:block">{data?.body?.name} -</p>
@@ -102,7 +102,7 @@ function closeTheModal() {
                                     <button class="fa-solid fa-arrow-left text-primary-700 bg-primary-200 rounded-lg hover:bg-primary-600 hover:text-primary-200 py-1 px-2 rounded-full" 
                                     on:click={() => {
                                         review = false
-                                        reviewBar = "mr-6"
+                                        reviewBar = "w-[87%] min-[500px]:w-[88%] md:w-[89.7%] lg:w-[90.2%]"
                                         round = ""
                                     }}></button>
                                 {/if}
@@ -116,7 +116,7 @@ function closeTheModal() {
                         </div>
                         {#if !review}
                             <!-- text button to open the 'review form' -->
-                            <div class="flex justify-center items-center p-1 bg-primary-700 mb-4 mr-6">
+                            <div class="flex justify-center items-center p-1 bg-primary-700 mb-4">
                                 {#if data?.body?.reviews.length === 0}
                                     <div class="flex items-center">
                                         <i class="fa-solid fa-pencil mr-2"></i>

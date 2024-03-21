@@ -149,7 +149,7 @@ async function getReview(user: string, rating: number, comment: string, listingN
         await newReview?.updateOne(
             {_id: listingId},
             // userId was turned into a string to prevent errors, but is still identifiable and shows as normal in class database
-            // also changes property name to match current document structure
+            // also changes property name to match current 'listingAndReviews' document structure
             // will show your name as well for review to be seen in reviews
             {$push: {reviews: {listing_id: String(listingId), reviewer_id: String(`ObjectId(${userId})`), reviewer_name: user, comments: comment, rating}}}
         )
