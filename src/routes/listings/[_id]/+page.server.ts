@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb'
 import clientPromise from '$lib/mongodb/mongodb.client'
 import { fail } from '@sveltejs/kit'
-import type { as } from 'vitest/dist/reporters-qc5Smpt5.js'
 
 
 // sets default image if the image URL is invalid

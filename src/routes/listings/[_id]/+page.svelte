@@ -350,20 +350,20 @@ function closeTheModal() {
                 <h2 class="text-lg mx-4 mb-1">{data?.body?.room_type} in {data?.body?.address.suburb}, {data?.body?.address.market}</h2>
 
                 <!-- capacities -->
-                <div class="mx-4 mb-1 flex gap-2 text-primary-600">
-                    <p>{data?.body?.guests_included > 1 ? data?.body?.guests_included + ' Guests' : data?.body?.guests_included + ' Guest'}</p>
+                <div class="mx-4 mb-1 flex gap-2 ">
+                    <p><a class="text-primary-600">{data?.body?.guests_included}</a>{data?.body?.guests_included > 1 ? ' Guests' : ' Guest'}</p>
                     <p>&bull;</p>
-                    <p>{data?.body?.bedrooms > 1 ? data?.body?.bedrooms + ' Bedrooms' : data?.body?.bedrooms + ' Bedroom'}</p>
+                    <p><a class="text-primary-600">{data?.body?.bedrooms}</a>{data?.body?.bedrooms > 1 ? ' Bedrooms' : ' Bedroom'}</p>
                     <p>&bull;</p>
-                    <p>{data?.body?.beds > 1 ? data?.body?.beds + ' Beds' : data?.body?.beds + ' Bed'}</p>
+                    <p><a class="text-primary-600">{data?.body?.beds}</a>{data?.body?.beds > 1 ? ' Beds' : ' Bed'}</p>
                     <p>&bull;</p>
-                    <p>{data?.body?.bathrooms > 1 ? data?.body?.bathrooms + ' Baths' : data?.body?.bathrooms + ' Bath'}</p>
+                    <p><a class="text-primary-600">{data?.body?.bathrooms}</a>{data?.body?.bathrooms > 1 ? ' Baths' : ' Bath'}</p>
                 </div>
 
                 <!-- rating -->
                 <div class="mx-4 flex gap-2 items-center">
                     <i class="fa-solid fa-star"></i>
-                    <h2 class="">{data?.body?.review_scores.review_scores_rating === undefined ? "No Rating" : data?.body?.review_scores.review_scores_rating}</h2>
+                    <h2 class="text-primary-600">{data?.body?.review_scores.review_scores_rating === undefined ? "No Rating" : data?.body?.review_scores.review_scores_rating}</h2>
                 </div>
 
                 <!-- {#if Array.isArray(data?.body?.reviews)}
@@ -388,10 +388,10 @@ function closeTheModal() {
                         <p class="text-lg font-bold">{data?.body?.host.host_name}</p>
                         <div class="flex gap-2">
                             {#if data?.body?.host.host_is_superhost}
-                                <p class="text-primary-600">Superhost</p>
-                                <p class="text-primary-600">&bull;</p>
+                                <p>Superhost</p>
+                                <p>&bull;</p>
                             {/if}
-                            <p class="text-primary-600">{data?.body?.host.host_total_listings_count > 1 ? data?.body?.host.host_total_listings_count + ' years hosting' : data?.body?.host.host_total_listings_count + ' year hosting'}</p>
+                            <p><a class="text-primary-600">{data?.body?.host.host_total_listings_count}</a>{data?.body?.host.host_total_listings_count > 1 ? ' years hosting' : ' year hosting'}</p>
                         </div>
                     </div>
                 </div>
@@ -405,7 +405,7 @@ function closeTheModal() {
 
                         <!-- limits the amount of visible amenities -->
                         {#each data?.body?.amenities.slice(0, showCount) as amenity}
-                            <p transition:slide|global class="text-primary-600">{amenity}</p>
+                            <p transition:slide|global class=" text-primary-600">{amenity}</p>
                         {/each}
                         {#if showCount < data?.body?.amenities.length}
                             <button class="w-full mt-4 py-2 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" on:click={showAll}>Show All</button>
