@@ -1,7 +1,16 @@
-<script>
+<script lang="ts">
 	import Authorization from './auth/+page.svelte'
 	import Navigation from './navigation/+page.svelte'
 	import { page } from '$app/stores'
+	import { onMount } from 'svelte'
+	import { grabReservations } from './grabReservations/grabReservations'
+
+
+	onMount(() => {
+		let userEmail = $page?.data?.session?.user?.email
+		grabReservations(userEmail)
+	})
+
 </script>
 
 {#if $page.data.session?.user}
