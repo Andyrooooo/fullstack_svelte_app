@@ -3,12 +3,21 @@
     import Authorization from '../../auth/+page.svelte'
     import { page } from '$app/stores'
     import { slide } from 'svelte/transition'
-    import Modal from './formModal.svelte'
-    import ReservationModal from './reserveModal.svelte'
     import Notifications from '../../airbnb/notificationsModal.svelte'
-    import { notificationsMessage, notificationsModal, notificationsTitle, reservations } from '../../airbnb/airbnbStore'
+    import { notificationsMessage, notificationsModal, notificationsTitle, reservations, notificationsWarning, notificationsReservations, notificationsReviews } from '../../airbnb/airbnbStore'
     import { onMount } from 'svelte'
 
+    export async function load({ session }) {
+        if (!session?.user) {
+            return {
+                status: 302,
+                redirect: '/'
+            }
+        }
+        return {}
+    }
+
+    // grabs the reservations from the database, the "grabReservations" function doesn't work this deep
 	export async function grabReservations(userEmail: string) {
 		try {
         const response = await fetch('../../grabReservations', {
@@ -30,32 +39,56 @@
         }
 	}
 
+    // when we get the response if there is a body and is not undefined then we can open the modal 
+    // we have to add the "=== undefined" because if we don't it will open the modal when the page loads
+    $: if (form?.body === undefined) {
+        notificationsWarning.set(false)
+        notificationsReservations.set(false)
+        notificationsReviews.set(false)
+        notificationsModal.set(false)
+        notificationsTitle.set("")
+        notificationsMessage.set("")
+    } else if (form?.body) {
+        notificationsWarning.set(false)
+        notificationsReservations.set(false)
+        notificationsReviews.set(true)
+        notificationsModal.set(true)
+        notificationsTitle.set("Review Was Submitted")
+        notificationsMessage.set("Your review has been submitted, we thank you for your input!")
+    }
+
     // Grabs the reservations when mounted and sends the users email to get ONLY their reservations
     onMount(() => {
-		let userEmail = $page?.data?.session?.user?.email
+        let userEmail = $page?.data?.session?.user?.email
 		grabReservations(userEmail)
 	})
 
 
+    // stores the number of nights and date range data for the post request
     let numberOfNights = 1
     let dates = {
         start: "",
         end: ""
     }
+
+    // gives animation for the reservation modal to slide on mobile
     let reservationHeight = "h-20 transition-all duration-300 ease-in-out"
     let rotateSlideButton = "rotate-0"
-    let reservationClicked = false
 
-    let formModal = false
+    // stores the current rating for the reviews
+    let currentRating = 0
+
+    // data and form data from the server
     export let data: any
     export let form: any
-    // when we get the response if there is a body and is not undefined then we can open the modal 
-    if (form?.body != undefined) {
-        formModal = true
-    }
-    let currentRating = 0
-    // $: console.log(form?.body)
-    /* $: console.log(data?.body) */
+
+    // opens the review modal
+    let open = false
+    // opens the review form
+    let review = false
+    // adjust the top header of the modal
+    let reviewBar = "w-[87%] min-[500px]:w-[88%] md:w-[89.7%] lg:w-[90.2%]"
+    let round = ""
 
     // helps us limit and show all amenities
     let showCount = 5
@@ -63,20 +96,20 @@
         showCount = data?.body?.amenities.length
     }
 
-    let open = false
-    let review = false
-    let reviewBar = "w-[87%] min-[500px]:w-[88%] md:w-[89.7%] lg:w-[90.2%]"
-    let round = ""
+
+    // function to open the reviews modal
     function openReviews() {
         open = true
     }
 
+    // function to open the reviews modal and adjust components
     function makeReview() {
         review = true
         reviewBar = "w-11/12"
         round = "rounded-tr-lg"
     }
 
+    // default rating for the stars in our review modal
     let rating = {
         current: 3,
         max: 6
@@ -93,6 +126,7 @@
         increment()
     }
 
+    // helps us increment the rating when clicked so it matches to the hover state
     function increment() {
         currentRating = rating.current + 1
         rating.current = currentRating - 1
@@ -108,10 +142,7 @@
     }
 }
 
-function closeTheModal() {
-    formModal = false
-}
-
+// function for our reservation menu on mobile to slide up and down when clicked open
 function slideReservationUp() {
     if (reservationHeight === "h-20 transition-all duration-300 ease-in-out") {
         reservationHeight = "h-5/6 rounded-t-lg transition-all duration-300 ease-in-out"
@@ -122,6 +153,8 @@ function slideReservationUp() {
     }
 }
 
+
+// our large function to send the reservation to the database, it checks for correct dates, incorrect dates, too many days, too little days, and no reservations made
 async function sendReservation() {
     let today = new Date()
     let formattedDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0')
@@ -132,20 +165,32 @@ async function sendReservation() {
     let diffInDays = String(Math.ceil(diffInMs / (1000 * 60 * 60 * 24)));
 
     if (dates.start === "" || dates.end === "") {
+        notificationsWarning.set(true)
+        notificationsReservations.set(false)
+        notificationsReviews.set(false)
         notificationsModal.set(true)
         notificationsTitle.set("Whoa where'ya goin partner?")
         notificationsMessage.set("Can't have a reservation without making any selections, please fill out the form in the menu below.")
         
     } else if (dates.start < formattedDate || dates.end < formattedDate) {
+        notificationsWarning.set(true)
+        notificationsReservations.set(false)
+        notificationsReviews.set(false)
         notificationsModal.set(true)
         notificationsTitle.set("Are you a time traveler?")
         notificationsMessage.set("Your reservation can't start in the past, please select a correct date.")
     } else {
         if (diffInDays > numberOfNights) {
+            notificationsWarning.set(true)
+            notificationsReservations.set(false)
+            notificationsReviews.set(false)
             notificationsModal.set(true)
             notificationsTitle.set("Whoa there cowboy!")
             notificationsMessage.set("You can't stay longer than the amount of days you've selected, please select a correct date.")
         } else if (diffInDays < numberOfNights){
+            notificationsWarning.set(true)
+            notificationsReservations.set(false)
+            notificationsReviews.set(false)
             notificationsModal.set(true)
             notificationsTitle.set("Whoa there cowboy!")
             notificationsMessage.set("Are you sure you pay for more nights than you're staying? You have more days selected than what you put in the calendar, get on back there!")
@@ -165,7 +210,7 @@ async function sendReservation() {
                 endDate: dates.end,
                 payPrice: (((((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10)) + (data?.body.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)).toFixed(2)
             }
-            let response = await fetch('./[_id]/makeReservation', {
+            let response = await fetch('../../api/makeReservation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -178,7 +223,12 @@ async function sendReservation() {
             numberOfNights = 1
             console.log(returnedReservation)
             if (returnedReservation) {
-                reservationClicked = true
+                notificationsWarning.set(false)
+                notificationsReservations.set(true)
+                notificationsReviews.set(false)
+                notificationsModal.set(true)
+                notificationsTitle.set("Reservation Placed")
+                notificationsMessage.set("Awesome! Your reservation has been placed! Just an FYI this is what the price would normally cost but as of today, all reservations are FREE!!!!!! Your reservation can be viewed in your Reservations section of your profile.")
                 let addReservation = [...$reservations, returnedReservation]
                 reservations.set(addReservation)
                 console.log($reservations)
@@ -189,7 +239,7 @@ async function sendReservation() {
 </script>
 
 <!-- lets us sign out correctly -->
-{#if $page.data.session?.user}
+<!-- {#if $page.data.session?.user} -->
 
     <!-- opens up the reviews modal -->
     <!-- revew opens the review form and close the reviews data -->
@@ -199,23 +249,23 @@ async function sendReservation() {
             <div class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-primary-900 w-11/12 h-5/6 rounded-lg overflow-y-auto">
                     <div class="fixed {reviewBar}">
-                        <div class="flex justify-between items-center pl-4 py-4 bg-primary-800 shadow-md rounded-tl-lg {round}">
+                        <div class="flex justify-between items-center pl-4 py-4 bg-primary-700 shadow-md rounded-tl-lg {round}">
                             {#if !review}
                                 <div class="flex font-bold">
                                     <p class="text-primary-200 mr-1 hidden md:block">{data?.body?.name} -</p>
-                                    <p class="text-primary-600 mr-1">{data?.body?.reviews.length}</p>
-                                    <p>Reviews</p>
+                                    <p class="text-primary-400 mr-1">{data?.body?.reviews.length}</p>
+                                    <p class="text-primary-200">Reviews</p>
                                 </div>
                             {:else}
                                 <div class="flex font-bold">
-                                    <p class="text-primary-200 mr-1 hidden md:block">{data?.body?.name} -</p>
+                                    <p class="text-primary-400 mr-1 hidden md:block">{data?.body?.name} -</p>
                                     <p class="text-primary-200">Add a Review</p>
                                 </div>
                             {/if}
                             <div class="flex gap-8 items-center mr-4">
                                 <!-- when adding a review we have a button to go back to reviews -->
                                 {#if review}
-                                    <button class="fa-solid fa-arrow-left text-primary-700 bg-primary-200 rounded-lg hover:bg-primary-600 hover:text-primary-200 py-1 px-2 rounded-full" 
+                                    <button class="fa-solid fa-arrow-left text-primary-700 bg-primary-200 rounded-lg hover:bg-primary-900 hover:text-primary-200 py-1 px-2 rounded-full" 
                                     on:click={() => {
                                         review = false
                                         reviewBar = "w-[87%] min-[500px]:w-[88%] md:w-[89.7%] lg:w-[90.2%]"
@@ -223,7 +273,7 @@ async function sendReservation() {
                                     }}></button>
                                 {/if}
                                 <!-- button to exit reviews -->
-                                <button class="fa-solid fa-circle-xmark text-primary-200 rounded-lg hover:text-primary-600 text-2xl" 
+                                <button class="fa-solid fa-circle-xmark text-primary-200 rounded-lg hover:text-primary-900 text-2xl" 
                                 on:click={() => {
                                     open = false
                                     review = false
@@ -232,15 +282,15 @@ async function sendReservation() {
                         </div>
                         {#if !review}
                             <!-- text button to open the 'review form' -->
-                            <div class="flex justify-center items-center p-1 bg-primary-700 mb-4">
+                            <div class="flex justify-center items-center p-1 bg-primary-800 mb-4">
                                 {#if data?.body?.reviews.length === 0}
                                     <div class="flex items-center">
-                                        <i class="fa-solid fa-pencil mr-2"></i>
+                                        <i class="fa-solid fa-pencil mr-2 text-primary-200"></i>
                                         <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">There's no reviews yet, want to make a review?</button>
                                     </div>
                                 {:else}
                                     <div class="flex items-center">
-                                        <i class="fa-solid fa-pencil mr-2"></i>
+                                        <i class="fa-solid fa-pencil mr-2 text-primary-200"></i>
                                         <button on:click={makeReview} class="text-primary-200 hover:text-primary-400">Want to add your own review?</button>
                                     </div>
                                 {/if}
@@ -259,70 +309,70 @@ async function sendReservation() {
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 pr-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:pr-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-circle-check hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Accuracy</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Accuracy</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_accuracy}</p>
-                                            <i class="fa-solid fa-circle-check block lg:hidden"></i>
+                                            <i class="fa-solid fa-circle-check block lg:hidden  text-primary-50"></i>
                                         </div>
 
                                         <!-- cleanliness section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-hand-sparkles hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Cleanliness</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Cleanliness</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_cleanliness}</p>
-                                            <i class="fa-solid fa-hand-sparkles block lg:hidden"></i>
+                                            <i class="fa-solid fa-hand-sparkles block lg:hidden  text-primary-50"></i>
                                         </div>
 
                                         <!-- checkin section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-bell-concierge hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Checkin</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Checkin</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_checkin}</p>
-                                            <i class="fa-solid fa-bell-concierge block lg:hidden"></i>
+                                            <i class="fa-solid fa-bell-concierge block lg:hidden  text-primary-50"></i>
                                         </div>
 
                                         <!-- communication section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-message hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Communication</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Communication</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_communication}</p>
-                                            <i class="fa-solid fa-message block lg:hidden"></i>
+                                            <i class="fa-solid fa-message block lg:hidden  text-primary-50"></i>
                                         </div>
 
                                         <!-- location section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-earth-asia hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Location</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Location</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_location}</p>
-                                            <i class="fa-solid fa-earth-asia block lg:hidden"></i>
+                                            <i class="fa-solid fa-earth-asia block lg:hidden  text-primary-50"></i>
                                         </div>
 
                                         <!-- value section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-money-bill-wave hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Value</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Value</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_value}</p>
-                                            <i class="fa-solid fa-money-bill-wave block lg:hidden"></i>
+                                            <i class="fa-solid fa-money-bill-wave block lg:hidden  text-primary-50"></i>
                                         </div>
 
                                         <!-- rating section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
                                                 <i class="fa-solid fa-tag hidden lg:text-xl lg:block pr-4"></i>
-                                                <p class="lg:text-xl lg:font-bold">Rating</p>
+                                                <p class="lg:text-xl lg:font-bold text-primary-50">Rating</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_rating}</p>
-                                            <i class="fa-solid fa-tag block lg:hidden"></i>
+                                            <i class="fa-solid fa-tag block lg:hidden  text-primary-50"></i>
                                         </div>
                                     </div>
                             </div>
@@ -377,13 +427,6 @@ async function sendReservation() {
 
                         <form class=" w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
                             <div class="w-full">
-                                <!-- label and input elements for the users name -->
-                                <!-- <div class="flex justify-center">
-                                    <div class="w-full md:w-8/12 lg:w-6/12">
-                                        <label for="name" class="text-primary-200 mt-4">Your Name</label>
-                                        <input name="name"  class="w-full mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" type="text" placeholder="Your Name..." required />
-                                    </div>
-                                </div> -->
 
                                 <input name="user" id="user" type="hidden" value={$page.data.session?.user?.name}/>
                                 <input name="userImage" id="user" type="hidden" value={$page.data.session?.user?.image}/>
@@ -399,9 +442,9 @@ async function sendReservation() {
                                         <!-- svelte-ignore a11y-no-static-element-interactions -->
                                         <div class="star" on:mouseenter={() => whichIcon(index)} on:click={() => setRating(index)} >
                                             {#if getStarType(index) === 'full'}
-                                                <i class="fa-solid fa-star text-3xl"></i>
+                                                <i class="fa-solid fa-star text-3xl text-primary-200"></i>
                                             {:else}
-                                                <i class="fa-regular fa-star text-3xl"></i>
+                                                <i class="fa-regular fa-star text-3xl text-primary-200"></i>
                                             {/if}
                                         </div>
                                     {/each}
@@ -412,13 +455,13 @@ async function sendReservation() {
                                 <div class="flex justify-center">
                                     <div class="w-full md:w-8/12 lg:w-6/12">
                                         <label for="comment" class="text-primary-200">Comments</label>
-                                        <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none" placeholder="Your review..." required />
+                                        <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none text-primary-200" placeholder="Your review..." required />
                                     </div>
                                 </div>
 
                                 <!-- submit and cancel button -->
                                 <div class="flex justify-center mt-4">
-                                    <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" type="submit">Submit</button>
+                                    <button class="py-2 px-4 bg-primary-600 rounded-lg hover:rounded-2xl transition-all duration-300 text-primary-200 mx-4" type="submit">Submit</button>
                                 </div>
                             </div>
                         </form>
@@ -441,14 +484,6 @@ async function sendReservation() {
 
     <main class="">
         <!-- Modal that will show when the form is submitted and has data and passes all the checks -->  
-        {#if formModal}
-            <Modal on:closeModal={closeTheModal}/>
-        {/if}
-
-        {#if reservationClicked}
-            <ReservationModal on:closeReservationModal={() => reservationClicked = false}/>
-        {/if}
-
         {#if $notificationsModal}
             <Notifications />
         {/if}
@@ -484,34 +519,25 @@ async function sendReservation() {
                 <h2 class="text-lg mx-4 mb-1">{data?.body?.room_type} in {data?.body?.address.suburb}, {data?.body?.address.market}</h2>
 
                 <!-- capacities -->
-                <div class="mx-4 mb-1 flex gap-2 ">
-                    <p><a class="text-primary-600">{data?.body?.guests_included}</a>{data?.body?.guests_included > 1 ? ' Guests' : ' Guest'}</p>
+                <div class="mx-4 mb-1 flex gap-2 text-primary-700">
+                    <p><a class="text-primary-900">{data?.body?.guests_included}</a>{data?.body?.guests_included > 1 ? ' Guests' : ' Guest'}</p>
                     <p>&bull;</p>
-                    <p><a class="text-primary-600">{data?.body?.bedrooms}</a>{data?.body?.bedrooms > 1 ? ' Bedrooms' : ' Bedroom'}</p>
+                    <p><a class="text-primary-900">{data?.body?.bedrooms}</a>{data?.body?.bedrooms > 1 ? ' Bedrooms' : ' Bedroom'}</p>
                     <p>&bull;</p>
-                    <p><a class="text-primary-600">{data?.body?.beds}</a>{data?.body?.beds > 1 ? ' Beds' : ' Bed'}</p>
+                    <p><a class="text-primary-900">{data?.body?.beds}</a>{data?.body?.beds > 1 ? ' Beds' : ' Bed'}</p>
                     <p>&bull;</p>
-                    <p><a class="text-primary-600">{data?.body?.bathrooms}</a>{data?.body?.bathrooms > 1 ? ' Baths' : ' Bath'}</p>
+                    <p><a class="text-primary-900">{data?.body?.bathrooms}</a>{data?.body?.bathrooms > 1 ? ' Baths' : ' Bath'}</p>
                 </div>
 
                 <!-- rating -->
                 <div class="mx-4 flex gap-2 items-center">
-                    <i class="fa-solid fa-star"></i>
-                    <h2 class="text-primary-600">{data?.body?.review_scores.review_scores_rating === undefined ? "No Rating" : data?.body?.review_scores.review_scores_rating}</h2>
+                    <i class="fa-solid fa-star text-primary-700"></i>
+                    <h2 class="text-primary-900">{data?.body?.review_scores.review_scores_rating === undefined ? "No Rating" : data?.body?.review_scores.review_scores_rating}</h2>
                 </div>
 
-                <!-- {#if Array.isArray(data?.body?.reviews)}
-                        {#each data?.body?.reviews as review}
-                            <div class="mx-4 pb-6">
-                                <p class="text-primary-600">{review.date}</p>
-                                <p class="text-primary-600">{review.reviewer_name}</p>
-                                <p class="text-primary-600">{review.comments}</p>
-                            </div>
-                        {/each}
-                    {/if} -->
 
-                <div class="mx-4 flex pb-6 border border-b-primary-800 border-t-0 border-l-0 border-r-0">
-                    <p class="text-primary-600 pr-2">{data?.body?.reviews.length}</p>
+                <div class="mx-4 flex pb-6 border border-b-primary-800 border-t-0 border-l-0 border-r-0 text-primary-900">
+                    <p class="text-primary-700 pr-2">{data?.body?.reviews.length}</p>
                     <button on:click={openReviews} class="underline hover:text-primary-500">Reviews</button>
                 </div>
 
@@ -525,7 +551,7 @@ async function sendReservation() {
                                 <p>Superhost</p>
                                 <p>&bull;</p>
                             {/if}
-                            <p><a class="text-primary-600">{data?.body?.host.host_total_listings_count}</a>{data?.body?.host.host_total_listings_count > 1 ? ' years hosting' : ' year hosting'}</p>
+                            <p class="text-primary-700"><a class="text-primary-800">{data?.body?.host.host_total_listings_count}</a>{data?.body?.host.host_total_listings_count > 1 ? ' years hosting' : ' year hosting'}</p>
                         </div>
                     </div>
                 </div>
@@ -542,9 +568,9 @@ async function sendReservation() {
                             <p transition:slide|global class=" text-primary-600">{amenity}</p>
                         {/each}
                         {#if showCount < data?.body?.amenities.length}
-                            <button class="w-full mt-4 py-2 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" on:click={showAll}>Show All</button>
+                            <button class="w-full mt-4 py-2 bg-primary-700 rounded-lg hover:rounded-2xl transition-all duration-300 text-primary-100" on:click={showAll}>Show All</button>
                             {:else}
-                            <button class="w-full mt-4 py-2 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" on:click={() => showCount = 5}>Show Less</button>
+                            <button class="w-full mt-4 py-2 bg-primary-700 rounded-lg hover:rounded-2xl transition-all duration-300 text-primary-100" on:click={() => showCount = 5}>Show Less</button>
                         {/if}
                     {/if}
                 </div>
@@ -555,59 +581,59 @@ async function sendReservation() {
 
             <!-- button and pricing bar on large -->
             <div class="lg:basis-6/12 mb-4 hidden lg:block w-full">
-                <form on:submit|preventDefault={sendReservation} class="hidden lg:block bg-primary-900 py-4 justify-between shadow-lg items-center mx-4 rounded-lg">
+                <form on:submit|preventDefault={sendReservation} class="hidden lg:block bg-primary-700 py-4 justify-between shadow-lg items-center mx-4 rounded-lg">
                     <!-- svelte-ignore a11y-missing-attribute -->
-                    <p class="mx-4"><a class="font-bold text-lg">${data?.body?.price}.00</a> night</p>
+                    <p class="mx-4 text-primary-50"><a class="font-bold text-lg">${data?.body?.price}.00</a> night</p>
 
                     <div class="mx-4 mt-4 mb-8">
                         <label for="numberOfNights" class="text-primary-200 mb-1">{$page.data.session?.user?.name}, how many nights are you staying?</label>
-                        <select name="nights" id="numberOfNights" class="px-4 w-full rounded-lg bg-primary-900 border border-primary-700 focus:border-primary-500 focus:ring-0 text-primary-100" bind:value={numberOfNights} required>
-                            <option class="bg-primary-700" value="1">1 night</option>
-                            <option class="bg-primary-700" value="2">2 nights</option>
-                            <option class="bg-primary-700" value="3">3 nights</option>
-                            <option class="bg-primary-700" value="4">4 nights</option>
-                            <option class="bg-primary-700" value="5">5 nights</option>
-                            <option class="bg-primary-700" value="6">6 nights</option>
-                            <option class="bg-primary-700" value="7">7 nights</option>
+                        <select name="nights" id="numberOfNights" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-500 focus:ring-0 text-primary-900" bind:value={numberOfNights} required>
+                            <option class="bg-primary-400" value="1">1 night</option>
+                            <option class="bg-primary-400" value="2">2 nights</option>
+                            <option class="bg-primary-400" value="3">3 nights</option>
+                            <option class="bg-primary-400" value="4">4 nights</option>
+                            <option class="bg-primary-400" value="5">5 nights</option>
+                            <option class="bg-primary-400" value="6">6 nights</option>
+                            <option class="bg-primary-400" value="7">7 nights</option>
                         </select>
                     </div>
 
                     <div class="mx-4 mt-4 mb-8 flex gap-4">
                         <div class="basis-6/12">
                             <label for="dates" class="text-primary-200 mb-1">Check In</label>
-                            <input type="date" class="px-4 w-full rounded-lg bg-primary-900 border border-primary-700 focus:border-primary-500 focus:ring-0 text-primary-100" bind:value={dates.start} required/>
+                            <input type="date" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-500 focus:ring-0 text-primary-900" bind:value={dates.start} required/>
                         </div>
                         <div class="basis-6/12">
                             <label for="dates" class="text-primary-200 mb-1">Check Out</label>
-                            <input type="date" class="px-4 w-full rounded-lg bg-primary-900 border border-primary-700 focus:border-primary-500 focus:ring-0 text-primary-100" bind:value={dates.end} required/>
+                            <input type="date" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-500 focus:ring-0 text-primary-900" bind:value={dates.end} required/>
                         </div>
                     </div>
 
                     <div class="mx-4 mb-8">
-                        <button class="py-2 w-full bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200">Reserve</button>
+                        <button class="py-2 w-full bg-primary-900 rounded-lg hover:rounded-2xl text-primary-50 transition-all duration-300">Reserve</button>
                     </div>
 
-                    <div class="flex justify-between px-4 py-2">
+                    <div class="flex justify-between px-4 py-2 text-primary-50">
                         <p>${data?.body?.price} x {numberOfNights} {numberOfNights > 1 ? "Nights" : "Night"}</p>
                         <p>${data?.body?.price * numberOfNights}</p>
                     </div>
 
-                    <div class="flex justify-between px-4 py-2">
+                    <div class="flex justify-between px-4 py-2 text-primary-50">
                         <p>Cleaning Fee</p>
                         <p>${data?.body?.cleaning_fee}</p>
                     </div>
 
-                    <div class="flex justify-between pt-2 px-4">
+                    <div class="flex justify-between pt-2 px-4 text-primary-50">
                         <p>Airbnb Service Fee</p>
                         <p>$60</p>
                     </div>
 
-                    <div class="flex justify-between pt-2 border-b border-primary-800 m-4 mt-2 pb-4">
+                    <div class="flex justify-between pt-2 border-b border-primary-800 m-4 mt-2 pb-4 text-primary-50">
                         <p>Taxes</p>
                         <p>${(((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10).toFixed(2)}</p>
                     </div>
 
-                    <div class="flex justify-between px-4 pb-4">
+                    <div class="flex justify-between px-4 pb-4 text-primary-50">
                         <p>Total</p>
                         <p>${(((((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10)) + (data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)).toFixed(2)}</p>
                     </div>
@@ -617,21 +643,21 @@ async function sendReservation() {
 
         <!-- button and pricing bar on small and medium -->
         <div>
-            <div class="lg:hidden bg-primary-900 fixed bottom-0 w-full shadow-lg items-center p-4 {reservationHeight} transition-all duration-300">
+            <div class="lg:hidden bg-primary-700 fixed bottom-0 w-full shadow-lg items-center p-4 {reservationHeight} transition-all duration-300">
                     {#if $notificationsModal}
                         <Notifications />
                     {/if}
 
                     <div class="flex justify-center absolute z-10 top-[-1rem] w-full">
-                        <button on:click={slideReservationUp} class="fa-solid fa-circle-chevron-up text-3xl hover:translate-y-[-4px] transition-all duration-300 hover:text-primary-500 rounded-full text-primary-700 {rotateSlideButton}"></button>
+                        <button on:click={slideReservationUp} class="fa-solid fa-circle-chevron-up text-3xl hover:translate-y-[-4px] transition-all duration-300 hover:text-primary-600 rounded-full text-primary-900 {rotateSlideButton}"></button>
                     </div>
                     
                     {#if reservationHeight === "h-20 transition-all duration-300 ease-in-out"}
                         <!-- svelte-ignore a11y-missing-attribute -->
                         <form on:submit|preventDefault={sendReservation} class=" flex justify-between items-center h-full">
-                            <p class="mx-4"><a class="font-bold text-lg">${data?.body?.price}.00</a> night</p>
+                            <p class="mx-4 text-primary-400"><a class="font-bold text-lg text-primary-100">${data?.body?.price}.00</a> night</p>
         
-                            <button class="py-2 px-4 bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200 mx-4" >Reserve</button>
+                            <button class="py-2 px-4 bg-primary-900 rounded-lg hover:rounded-xl text-primary-100 mx-4 transition-all duration-300" >Reserve</button>
                         </form>
                     {/if}
 
@@ -641,53 +667,53 @@ async function sendReservation() {
 
                             <div class="mx-4 mt-4 mb-8">
                                 <label for="numberOfNights" class="text-primary-200 mb-1">{$page.data.session?.user?.name}, how many nights are you staying?</label>
-                                <select name="nights" id="numberOfNights" class="px-4 w-full rounded-lg bg-primary-900 border border-primary-700 focus:border-primary-500 focus:ring-0 text-primary-100" bind:value={numberOfNights} required>
-                                    <option class="bg-primary-700" value="1">1 night</option>
-                                    <option class="bg-primary-700" value="2">2 nights</option>
-                                    <option class="bg-primary-700" value="3">3 nights</option>
-                                    <option class="bg-primary-700" value="4">4 nights</option>
-                                    <option class="bg-primary-700" value="5">5 nights</option>
-                                    <option class="bg-primary-700" value="6">6 nights</option>
-                                    <option class="bg-primary-700" value="7">7 nights</option>
+                                <select name="nights" id="numberOfNights" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-800 focus:ring-0 " bind:value={numberOfNights} required>
+                                    <option class="bg-primary-300 text-primary-900" value="1">1 night</option>
+                                    <option class="bg-primary-300 text-primary-900" value="2">2 nights</option>
+                                    <option class="bg-primary-300 text-primary-900" value="3">3 nights</option>
+                                    <option class="bg-primary-300 text-primary-900" value="4">4 nights</option>
+                                    <option class="bg-primary-300 text-primary-900" value="5">5 nights</option>
+                                    <option class="bg-primary-300 text-primary-900" value="6">6 nights</option>
+                                    <option class="bg-primary-300 text-primary-900" value="7">7 nights</option>
                                 </select>
                             </div>
 
                             <div class="mx-4 mt-4 mb-8 flex gap-4">
                                 <div class="basis-6/12">
                                     <label for="dates" class="text-primary-200 mb-1">Check In</label>
-                                    <input type="date" class="px-4 w-full rounded-lg bg-primary-900 border border-primary-700 focus:border-primary-500 focus:ring-0 text-primary-100" bind:value={dates.start} required/>
+                                    <input type="date" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-800 focus:ring-0 text-primary-900" bind:value={dates.start} required/>
                                 </div>
                                 <div class="basis-6/12">
                                     <label for="dates" class="text-primary-200 mb-1">Check Out</label>
-                                    <input type="date" class="px-4 w-full rounded-lg bg-primary-900 border border-primary-700 focus:border-primary-500 focus:ring-0 text-primary-100" bind:value={dates.end} required/>
+                                    <input type="date" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-800 focus:ring-0 text-primary-900" bind:value={dates.end} required/>
                                 </div>
                             </div>
 
                             <div class="mx-4 mb-8">
-                                <button class="py-2 w-full bg-primary-700 rounded-lg hover:bg-primary-600 hover:text-primary-200" >Reserve</button>
+                                <button class="py-2 w-full bg-primary-900 text-primary-50 rounded-lg hover:rounded-2xl transition-all duration-300" >Reserve</button>
                             </div>
 
-                            <div class="flex justify-between px-4 py-2">
+                            <div class="flex justify-between px-4 py-2 text-primary-50">
                                 <p>${data?.body?.price} x {numberOfNights} {numberOfNights > 1 ? "Nights" : "Night"}</p>
                                 <p>${data?.body?.price * numberOfNights}</p>
                             </div>
 
-                            <div class="flex justify-between px-4 py-2">
+                            <div class="flex justify-between px-4 py-2 text-primary-50">
                                 <p>Cleaning Fee</p>
                                 <p>${data?.body?.cleaning_fee}</p>
                             </div>
 
-                            <div class="flex justify-between pt-2 px-4">
+                            <div class="flex justify-between pt-2 px-4 text-primary-50">
                                 <p>Airbnb Service Fee</p>
                                 <p>$60</p>
                             </div>
 
-                            <div class="flex justify-between pt-2 border-b border-primary-800 m-4 mt-2 pb-4">
+                            <div class="flex justify-between pt-2 border-b border-primary-800 m-4 mt-2 pb-4 text-primary-50">
                                 <p>Taxes</p>
                                 <p>${(((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10).toFixed(2)}</p>
                             </div>
 
-                            <div class="flex justify-between px-4 pb-4">
+                            <div class="flex justify-between px-4 pb-4 text-primary-50">
                                 <p>Total</p>
                                 <p>${(((((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10)) + (data?.body.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)).toFixed(2)}</p>
                             </div>
@@ -696,6 +722,7 @@ async function sendReservation() {
             </div>
         </div>
     </main>
-{:else}
-    <Authorization />
-{/if}
+
+
+
+<!-- {/if} -->

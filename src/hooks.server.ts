@@ -37,3 +37,10 @@ export const {handle} = SvelteKitAuth({
   adapter: MongoDBAdapter(clientPromise, {
     databaseName: "DWDD3780"}),
 })
+
+export async function getSession(request) {
+  const user = request.locals.user; // get user from request locals
+  return {
+      user: user ? { name: user.name, email: user.email } : null
+  };
+}

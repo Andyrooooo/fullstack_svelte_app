@@ -5,6 +5,16 @@
 	import { onMount } from 'svelte'
 	import { grabReservations } from '../grabReservations/grabReservations'
 
+    export async function load({ session }) {
+        if (!session?.user) {
+            return {
+                status: 302,
+                redirect: '/'
+            }
+        }
+        return {}
+    }
+
     // areas will give us all the data for the filters
     let areas: any = []
     // holds all the data for the street, cuisine, and name filters
@@ -51,7 +61,7 @@
 
     // when mounted, the page will grab the reservations and the various food data
 	onMount(async () => {
-		let userEmail = $page?.data?.session?.user?.email
+        let userEmail = $page?.data?.session?.user?.email
 		await grabReservations(userEmail)
         await grabAllFoods()
 	})
@@ -290,7 +300,7 @@
     }
 </script>
 
-{#if $page.data.session?.user}
+<!-- {#if $page.data.session?.user} -->
 	<div class="">
 		<div class="">
 			<Navigation />
@@ -303,7 +313,7 @@
                 <div class="flex w-full border-b border-primary-800 pb-2 mb-2">
 
                     <div class="relative basis-11/12">
-                        <input bind:value={restaurantSearch} type="text" class="rounded-full w-full border-2 border-primary-700 pl-4 pr-12 py-2 bg-primary-800 focus:outline-none focus:ring-0 focus:border-primary-500 placeholder:text-primary-600" placeholder="Search for a restaurant..."/>
+                        <input bind:value={restaurantSearch} type="text" class="rounded-full w-full border-2 border-primary-600 pl-4 pr-12 py-2 bg-primary-300 focus:outline-none focus:ring-0 focus:border-primary-700 placeholder:text-primary-600" placeholder="Search for a restaurant..."/>
                         <button on:click={findSearch} class="absolute z-10 right-[1px] h-full">
                             <div class="fa-solid fa-magnifying-glass rounded-full bg-primary-700 hover:bg-primary-600 p-3"></div>
                         </button>
@@ -311,7 +321,6 @@
 
                     <!-- FILTER FUNCTIONALITY  -->
                     <div class="basis-1/12 flex items-center relative">
-                        <!-- WE ARE RIGHT HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
                         <button on:click={filterByLikes} class="w-full flex justify-center ml-2">
                             <div class="text-2xl fa-solid fa-heart rounded-lg py-1 px-4 bg-primary-700 hover:bg-primary-600"></div>
                         </button>
@@ -321,7 +330,7 @@
                         </button>
 
                         {#if filterOpen}
-                            <div class="absolute z-10 top-12 right-14 bg-primary-700 rounded-lg border border-primary-800 w-72 shadow-lg">
+                            <div class="absolute z-10 top-12 right-14 bg-primary-700 rounded-lg border border-primary-600 w-72 shadow-lg text-primary-300">
                                 
                                 <div on:click={grabAllFoods} class="py-1 text-left hover:bg-primary-600 px-4 rounded-t-lg cursor-pointer">All</div>
                                 
@@ -373,12 +382,12 @@
                         </div>
                     </div>
 
-                    
+                
                     
                 </div>
                 <div class="flex">
                     {#each areaList as area}
-                        <button on:click={() => filterBorough(area)} class="flex border border-primary-700 py-1 px-2 m-1 rounded-full bg-primary-800 text-sm hover:border-primary-500">{area}</button>
+                        <button on:click={() => filterBorough(area)} class="flex border border-primary-600 py-1 px-2 m-1 rounded-full bg-primary-400 text-sm hover:border-primary-700">{area}</button>
                     {/each}
                 </div>
             </div>
@@ -386,7 +395,7 @@
 
         <div class="flex flex-wrap p-4 w-full">
             {#if currentAreas.length === 0}
-                    <div class="w-full h-full text-primary-300 flex justify-center items-center mt-40 text-3xl font-bold">
+                    <div class="w-full h-full text-primary-900 flex justify-center items-center mt-40 text-3xl font-bold">
                         <p>No restaurants found</p>
                         <i class="fa-solid fa-face-sad-tear ml-4"></i>
                     </div>
@@ -394,20 +403,20 @@
                 {#each currentAreas as area}
                     <div class="relative basis-full md:basis-6/12 lg:basis-4/12 p-1 mb-28">
                         {#if area.likes && area?.likes.some(like => like?.user === $page.data.session?.user?.email)}
-                            <button on:click={unlikeRestaurant(area, currentAreas)} class="fa-solid fa-heart absolute z-10 top-4 right-4 text-2xl bg-primary-900 px-2 py-1 rounded-full shadow-lg text-primary-200"></button>
+                            <button on:click={unlikeRestaurant(area, currentAreas)} class="fa-solid fa-heart absolute z-10 top-4 right-4 text-2xl bg-primary-700 px-2 py-1 rounded-full shadow-lg text-primary-300"></button>
                         {:else}
-                            <button on:click={likeRestaurant(area, currentAreas)} class="fa-regular fa-heart absolute z-10 top-4 right-4 text-2xl bg-primary-900 px-2 py-1 rounded-full shadow-lg"></button>
+                            <button on:click={likeRestaurant(area, currentAreas)} class="fa-regular fa-heart absolute z-10 top-4 right-4 text-2xl bg-primary-700 px-2 py-1 rounded-full shadow-lg text-primary-300"></button>
                         {/if}
                         <img src={getRandomImage()} alt="logo" class="rounded-lg shadow-lg h-full object-cover "/>
                         <div class="px-2 mt-2">
                             <p class="font-bold">{area.name}</p>
                             <div class="flex items-center">
                                 <i class="fa-solid fa-location-dot mr-2"></i>
-                                <p class="text-primary-600">{area.address.building} {area.address.street} {area.borough} {area.address.zipcode}</p>
+                                <p class="text-primary-700">{area.address.building} {area.address.street} {area.borough} {area.address.zipcode}</p>
                             </div>
                             <div class="flex items-center">
                                 <i class="fa-solid fa-bowl-food mr-2"></i>
-                                <p class="text-primary-600">{area.cuisine}</p>
+                                <p class="text-primary-700">{area.cuisine}</p>
                             </div>
                         </div>
                     </div>
@@ -415,6 +424,6 @@
             {/if}
         </div>
 	</div>
-{:else}
-	<Authorization />
-{/if}
+
+
+<!-- {/if} -->

@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb'
 import clientPromise from '$lib/mongodb/mongodb.client'
+import { redirect } from '@sveltejs/kit'
 
 // sets default image if the image URL is invalid
 async function validateImageURL(url: string): Promise<string | null> {
@@ -15,7 +16,13 @@ async function validateImageURL(url: string): Promise<string | null> {
     }
 }
 
-export async function load() {
+export async function load(event) {
+    const session = await event.locals.auth()
+
+    if (!session?.user) {
+        throw redirect(303, '/')
+    }
+    
     let client, listings
 
     try {
