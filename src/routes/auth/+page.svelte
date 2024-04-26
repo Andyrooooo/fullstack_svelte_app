@@ -80,13 +80,16 @@
 {:else}
 
 <!-- if the user is not signed in this is what they will see with various hover effects -->
-    <div class="absolute top-10 md:top-1/4 lg:top-1/3 z-40 w-full flex justify-center">
-        <p class="hover-effect hover-side text-xl px-6 py-2 text-primary-50 rounded-lg font-bold shadow-xl flex gap-2 bg-primary-700 border border-primary-600">
-            <i class="fa-solid fa-home text-xl text-primary-50"></i>
-            Andrew Kesters Listings
-        </p>
-    </div>
+    
     <div class="absolute z-40 w-full h-screen flex justify-center items-center">
+        <!-- hover effect for the app name -->
+        <div class="absolute translate-y-[-200px] z-50 w-full flex justify-center">
+            <p class="hover-effect hover-side text-xl px-6 py-2 text-primary-50 rounded-lg font-bold shadow-xl flex gap-2 bg-primary-700 border border-primary-600">
+                <i class="fa-solid fa-home text-xl text-primary-50"></i>
+                Andrew Kesters Listings
+            </p>
+        </div>
+
         <div class="absolute z-50 bg-primary-700 border border-primary-600 p-4 rounded-lg border text-primary-50 shadow-lg w-1/2 bg-opacity-90">
 
             <p class="text-center mb-4">Sign In Using GitHub</p>
