@@ -34,4 +34,9 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 #### You also see the reservation page AND API data in this file [MyReservation](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/myReservations)
 #### To also make sure the reservation notifications visible on the "person settings modal" there is also a second file with an api endpoint that gets called in all pages. This can be viewed here: [grabReservations](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/grabReservations)
 
+### Final Refinements and additions
+#### To finalize this project I decided to update and universalize my "notification" modals. These are modals that will display for various user interactions. This includes warnings, regular notifications, review submissions, and reservations. THey will look something like this:
+![Screenshot 2024-04-26 170206](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/2b658247-c551-4800-b4ba-2c17a5eb59b6)
+You can also view these modals here: [modal one and two component and store](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/airbnb)
 
+#### Finally the page will display animations on the login page and home page that give insight and additional information to users who login.
