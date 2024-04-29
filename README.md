@@ -13,9 +13,62 @@
 
 ### Adding a form to action
 ![Screenshot 2024-04-29 165731](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/0103c8c6-8f5b-45ac-9b9a-24e6d3535768)
-#### For my iteration of this part of the project I decided early on that it would make more sense to nest all the data inside each dynamic route and that's where I've been going for some time. So, to find the reviews you will first select a listing you want to view, from there you will see "reviews" as one of the first options in the listing and it will also be highlighted. This will bring up a modal with various pieces of data to help you decide if this is the place you want to stay. Once in here you may click on the prompt "Want to add your own review?" to bring up the form. The app has been configured to grab various pieces of data to display in the reviews modal. I have also configured the data to show in a "reviews" collection of the DGM3780 database and send a different version to the "listingAndReviews" collection of the Airbnb database sample. This will look something like this:
+#### For the "form to action" section I have added a "review" form. When you are in each dynamic route you will select "reviews" which will be highlighted. From there you will see the above modal filled with reviews and ratings of the listing. If you click the "want to add your own review", it will bring up a section to submit a review. When your review is submitted you will be able to view your review inside the list of existing reviews. When the form is submitted it will be sent to two separate collections, one for my personal collection and one to the AirBnB sample data.
 ![airbnb_sample_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/f6f60613-29bc-4853-808b-a5b0841b2b4f)
 ![dwdd_review_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/89668f84-f270-4dd2-b572-790f4b45cfc1)
+#### The form code will also look like this inside the dynamic route:
+```
+<form class=" w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
+    <div class="w-full">
+
+        <input name="user" id="user" type="hidden" value={$page.data.session?.user?.name}/>
+        <input name="userImage" id="user" type="hidden" value={$page.data.session?.user?.image}/>
+        <input name="rating" id="rating" type="hidden" value={currentRating}/>
+        <input name="listingName" id="listingName" type="hidden" value={data?.body?.name}/>
+        <input name="date" id="date" type="hidden" value={new Date()}/>
+
+        <!-- Star rating which allows you to hover over the star and also select the star to get the value -->
+        <!-- This is done using mouseenter and grabbing the index and same with the rating when clicked -->
+        <div class="flex justify-center gap-4 mb-8">
+            {#each Array(rating.max) as _, index (index)}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <div class="star" on:mouseenter={() => whichIcon(index)} on:click={() => setRating(index)} >
+                    {#if getStarType(index) === 'full'}
+                        <i class="fa-solid fa-star text-3xl text-primary-200"></i>
+                    {:else}
+                        <i class="fa-regular fa-star text-3xl text-primary-200"></i>
+                    {/if}
+                </div>
+            {/each}
+        </div>
+
+
+        <!-- label and textarea elements for the users comment -->
+        <div class="flex justify-center">
+            <div class="w-full md:w-8/12 lg:w-6/12">
+                <label for="comment" class="text-primary-200">Comments</label>
+                <textarea name="comment"  class="w-full h-32 mt-2 rounded-lg bg-primary-800 border border-primary-800 placeholder-primary-500 focus:ring-0 focus:border-primary-500 focus:outline-none text-primary-200" placeholder="Your review..." required />
+            </div>
+        </div>
+
+        <!-- submit and cancel button -->
+        <div class="flex justify-center mt-4">
+            <button class="py-2 px-4 bg-primary-600 rounded-lg hover:rounded-2xl transition-all duration-300 text-primary-200 mx-4" type="submit">Submit</button>
+        </div>
+    </div>
+</form>
+
+<!-- error message when any data comes back without needed data -->
+{#if form?.error}
+    <div class="absolute z-10 flex justify-center items center top-36 left-0 w-full">
+        <div class="bg-red-50 w-full md:w-7/12 lg:w-5/12 border-red-400 border rounded-lg mx-10 shadow-lg flex">
+            <p class="text-red-400 pl-4 py-4 pr-1">Error:</p>
+            <p class="text-black py-4 pr-4">{form.error}</p>
+        </div>
+    </div>
+{/if}
+```
 You can also view the code here and I apologize for its size in advance [Dynamic route server, modal, and client-side code](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/listings/%5B_id%5D)
 
 
