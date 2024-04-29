@@ -15,6 +15,7 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 
 
 ### Adding API enpoints
+#### KEEP IN MIND - The data does not have images so they are dynamically placed into each restaurant at random, so the data will change but the images may not change.
 #### For my API I thought it would make sense to use the restaurant sample data to go along with my AirBnB data. So, I have create a page where you are able to look at restaurants with an image, name, address, and type of food. For my endpoints to manipulate the data we have a search feature which will look for a name related to your search and display that result if there is a name. 
 ![Screenshot 2024-04-10 222234](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/4de1fb19-1ac9-477a-afea-b3b4c05b8bf4)
 #### To the right of that will be a heart icon that filters the restaurants based on your likes. So, you will be able to like restaurants and unlike but they will show in this filter when pressed.
