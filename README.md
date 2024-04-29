@@ -1,6 +1,6 @@
 # DWDD 3780 Sveltekit Fullstack App
 #### Greetings!
-<img width="920" alt="Screenshot 2024-04-29 163548" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/f760dba1-606b-489e-b649-945145e5f6fe">![Screenshot 2024-04-29 163319](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/5f06079e-c333-4b58-8989-27f6996b60a6)
+![Screenshot 2024-04-29 163319](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/5f06079e-c333-4b58-8989-27f6996b60a6)
 
 
 #### This is my fullstack app using Svelte. Upon connecting to the site you will be prompted to sign in with your GitHub account. You can view the Vercel site here: [Vercel](https://fullstack-svelte-app.vercel.app/). You can also view the link on the page under the 'about' section. You may also view the site at its final location on my domain [andrew-j-kester](https://www.andrew-j-kester.com/)
