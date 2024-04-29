@@ -308,7 +308,7 @@ async function sendReservation() {
                                         <!-- Accuracy section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 pr-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:pr-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-circle-check hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-circle-check hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Accuracy</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_accuracy}</p>
@@ -318,7 +318,7 @@ async function sendReservation() {
                                         <!-- cleanliness section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-hand-sparkles hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-hand-sparkles hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Cleanliness</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_cleanliness}</p>
@@ -328,7 +328,7 @@ async function sendReservation() {
                                         <!-- checkin section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-bell-concierge hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-bell-concierge hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Checkin</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_checkin}</p>
@@ -338,7 +338,7 @@ async function sendReservation() {
                                         <!-- communication section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-message hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-message hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Communication</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_communication}</p>
@@ -348,7 +348,7 @@ async function sendReservation() {
                                         <!-- location section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-earth-asia hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-earth-asia hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Location</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_location}</p>
@@ -358,7 +358,7 @@ async function sendReservation() {
                                         <!-- value section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-money-bill-wave hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-money-bill-wave hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Value</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_value}</p>
@@ -368,7 +368,7 @@ async function sendReservation() {
                                         <!-- rating section -->
                                         <div class="border border-b-0 border-t-0 border-l-0 border-r-primary-800 px-4 mb-4 lg:flex lg:justify-between lg:items-center lg:gap-2 lg:border-b lg:border-b-primary-800 lg:border-r-0 lg:pb-4 lg:px-0">
                                             <div class="flex items-center">
-                                                <i class="fa-solid fa-tag hidden lg:text-xl lg:block pr-4"></i>
+                                                <i class="fa-solid fa-tag hidden lg:text-xl lg:block pr-4 text-primary-50"></i>
                                                 <p class="lg:text-xl lg:font-bold text-primary-50">Rating</p>
                                             </div>
                                             <p class="text-primary-600 block mb-4 lg:mb-0 lg:text-xl lg:font-bold">{data?.body?.review_scores.review_scores_rating}</p>
