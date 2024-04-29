@@ -12,6 +12,7 @@
 
 
 ### Adding a form to action
+![Screenshot 2024-04-29 165731](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/0103c8c6-8f5b-45ac-9b9a-24e6d3535768)
 #### For my iteration of this part of the project I decided early on that it would make more sense to nest all the data inside each dynamic route and that's where I've been going for some time. So, to find the reviews you will first select a listing you want to view, from there you will see "reviews" as one of the first options in the listing and it will also be highlighted. This will bring up a modal with various pieces of data to help you decide if this is the place you want to stay. Once in here you may click on the prompt "Want to add your own review?" to bring up the form. The app has been configured to grab various pieces of data to display in the reviews modal. I have also configured the data to show in a "reviews" collection of the DGM3780 database and send a different version to the "listingAndReviews" collection of the Airbnb database sample. This will look something like this:
 ![airbnb_sample_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/f6f60613-29bc-4853-808b-a5b0841b2b4f)
 ![dwdd_review_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/89668f84-f270-4dd2-b572-790f4b45cfc1)
