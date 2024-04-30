@@ -331,6 +331,7 @@ HTML
 ![Screenshot 2024-04-29 202837](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/e8dd57d7-2364-4b9d-b117-b6cb069a6462)
 #### For additional endpoints and for the sake of finishing the "making a reservation" within each dynamic route I have built this component. If you navigate to any dynamic route so clicking the "listings" button in the navigation and selecting any listing you will stumble upon this reservation form. There is error handling so, dont worry about making any mistakes here. Upon completion of your reservation, you will be prompted with a notification that you have made a reservation and will also be notified of how to check your reservations. (unfortunately due to it's size I have only included the HTML)
 ```html
+HTML
 <form on:submit|preventDefault={sendReservation}>
     <p class="mx-4"><a class="font-bold text-lg">${data?.body?.price}.00</a> night</p>
 
@@ -392,11 +393,52 @@ HTML
 
 
 ### Checking your Reservation
-![Screenshot 2024-04-29 203954](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/b4a76d6c-bea8-4577-b8cd-11e11b79f8da)
-#### We are here
+![Screenshot 2024-04-29 203954](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/4109c479-6a26-4fa2-9ab1-7bff33207187)
+#### As I mentioned, once you make a reservation you can view them by clicking your profile picture. This will open your menu where you will see "reservations" along with the number of reservations you have. This is also viewable on each page so, you can be on any page within the site and still view your reservation numbers. When you click the reservation text you will be routed to the reservations page.
+```html
+HTML
+<!-- this tells us how many reservations there are and when hovered gives us a nice bottom border -->
+<div class="flex items-center">
+    <i class="fa-solid fa-suitcase mr-2 {numberOfReservations.length < 1 ? "text-primary-200" : "text-primary-300"}"></i>
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <a 
+    href="../myReservations"
+    on:mouseenter={highlight} 
+    on:mouseleave={unHighlight} 
+    class="{numberOfReservations.length < 1 ? "text-primary-200" : "text-primary-300"} cursor-pointer border-primary-300">
+    Reservations
+    </a>
+    <div class="ml-1 py-0.5 px-[7px] bg-primary-300 rounded-full text-xs">{numberOfReservations.length}</div>
+</div>
+<div class="border-primary-50 border-b-2 {border} transition-all duration-300 mt-1 rounded-full"></div>
+
+<div class="border border-t-primary-800 border-b-0 border-l-0 border-r-0 mt-4 pt-4 flex justify-center">
+    <button class="py-2 px-4 bg-primary-900 rounded-lg hover:rounded-2xl text-primary-50 transition-all duration-300" on:click={handleSignOut}>Sign Out</button>
+</div>
+```
+#### This code where for the person settings modal is viewable in the "auth" file here: [auth](https://github.com/Andyrooooo/fullstack_svelte_app/blob/master/src/routes/auth/%2Bpage.svelte)
+
+#### To also make sure the reservation notifications visible on the "person settings modal" there is file with an api endpoint that gets called in all pages. It is then saved to a svelte store that can be utilized throughout my code. This can be viewed here: [grabReservations](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/grabReservations)
+#### The code used to grab the reservations for each page will look like this:
+```javascript
+JavaScript
+// Grabs the reservations when mounted and sends the users email to get ONLY their reservations
+onMount(() => {
+    let userEmail = $page?.data?.session?.user?.email
+    grabReservations(userEmail)
+})
+```
+
+
+
+
+
+
+
 
 #### You also see the reservation page AND API data in this file [MyReservation](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/myReservations)
-#### To also make sure the reservation notifications visible on the "person settings modal" there is also a second file with an api endpoint that gets called in all pages. This can be viewed here: [grabReservations](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/grabReservations)
+
 
 ### Final Refinements and additions
 #### To finalize this project I decided to update and universalize my "notification" modals. These are modals that will display for various user interactions. This includes warnings, regular notifications, review submissions, and reservations. THey will look something like this:
