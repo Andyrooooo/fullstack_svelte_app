@@ -116,7 +116,7 @@ HTML
 ### liked Restaurants Endpoint
 <img width="904" alt="Screenshot 2024-04-29 190554" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/8defde1e-a764-4a99-b02a-27677e2ab58f">
 
-#### To the right of the search endpoint will be the "liked" filter functionality. This button(with the heart) will grab all the restaurants you have liked from the database. This functionality is specific to you by your email so you will only see restaurants YOU liked. It corresponds to the heart you will see on each image and when clicked will add to your list of liked restaurants.
+#### To the right of the search endpoint will be the "liked" filter functionality. This button(with the heart) will grab all the restaurants you have liked from the database. This functionality is specific to you by your email so you will only see restaurants YOU liked. It corresponds to the heart you will see on each image and when clicked will add to your list of liked restaurants. You may also see below the second function "likeRestaurant" this function is when the user clicks the heart icon on the image. It will add their email to the specific document and base on the type of filter currently in use will allow it to refresh.
 
 ```javascript
 JavaScript
@@ -133,6 +133,65 @@ async function filterByLikes() {
     currentAreas = data
     currentFilter = { type: 'likes', user: $page.data.session?.user?.email }
 }
+
+// likes the restaurant
+    async function likeRestaurant(area) {
+
+        const response = await fetch('api/food', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type: 'like', user: $page.data.session?.user?.email, _id: area._id })
+        })
+        
+        // nitpicky but it checks the type of filter applied and its value to re-render the restaurants without a refresh
+        if (currentFilter === "all") {
+            grabAllFoods()
+        } else if (currentFilter.type === "borough") {
+            filterBorough(currentFilter.borough)
+        } else if (currentFilter.type === "street") {
+            filterByStreet(currentFilter.street)
+        } else if (currentFilter.type === "cuisine") {
+            filterByCuisine(currentFilter.cuisine)
+        } else if (currentFilter.type === "name") {
+            filterByName(currentFilter.name)
+        } else if (currentFilter.type === "search") {
+            findSearch(currentFilter.search)
+        } else if (currentFilter.type === "likes") {
+            filterByLikes(currentFilter.user)
+        }
+    }
+
+// unlikes the restaurant
+    async function unlikeRestaurant(area) {
+        console.log(area)
+
+        const response = await fetch('api/food', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ type: 'unlike', user: $page.data.session?.user?.email, _id: area._id })
+        })
+        
+        // checks the type of filter applied and its value to re-render the the restaurants without a refresh
+        if (currentFilter === "all") {
+            grabAllFoods()
+        } else if (currentFilter.type === "borough") {
+            filterBorough(currentFilter.borough)
+        } else if (currentFilter.type === "street") {
+            filterByStreet(currentFilter.street)
+        } else if (currentFilter.type === "cuisine") {
+            filterByCuisine(currentFilter.cuisine)
+        } else if (currentFilter.type === "name") {
+            filterByName(currentFilter.name)
+        } else if (currentFilter.type === "search") {
+            findSearch(currentFilter.search)
+        } else if (currentFilter.type === "likes") {
+            filterByLikes(currentFilter.user)
+        }
+    }
 ```
 ```html
 HTML
@@ -151,9 +210,10 @@ HTML
 ![Screenshot 2024-04-10 222109](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/b1f07541-10a7-43aa-83fc-2cc105111b73)
 ```
 
+
 ### "Filter By" Endpoint
 ![Screenshot 2024-04-29 192456](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/203da9b4-a2f4-4698-bab3-eb541025b1d6)
-#### This filter will be located to the right of the heart button. This endpoint will grab all the cuisine, street, and restaurant names from the database and put them into a filter modal. when you open a modal you can click and one of the options to filter the displayed restaurants with that filter to find all in the database that match its criteria.
+#### This filter will be located to the right of the heart button. This endpoint will grab all the cuisine, street, and restaurant names from the database and put them into a filter modal. when you open a modal you can click and one of the options to filter the displayed restaurants with that filter to find all in the database that match its criteria.(due to size I have only included the HTML)
 ```html
 HTML
 {#if filterOpen}
@@ -203,6 +263,27 @@ HTML
 {/if}
 ```
 
+
+### "Clear" Endpoint
+#### The clear (x) button which is located to the right of the "filter by" button will clear searches by re-fetching all data from the database.
+```javascript
+JavaScript
+// function to grab all the restaurants
+async function grabAllFoods() {
+    const response = await fetch('api/food')
+    areas = await response.json()
+    currentAreas = areas
+    currentFilter = "all"
+}
+```
+```html
+HTML
+<div class="flex items-center">
+    <button on:click={grabAllFoods} class="w-full flex justify-center ml-2">
+        <div class="text-2xl fa-solid fa-xmark rounded-lg py-1 px-4 bg-primary-700 hover:bg-primary-600"></div>
+    </button>
+</div>
+```
 
 #### The last filtering capabilities will be below in the form of small buttons. These buttons will allow you to filter based on the borough, so, Manhattan, Brooklyn, and so on.
 ![Screenshot 2024-04-10 222249](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/fe1221e5-0453-4c94-9176-04d8c15d53a2)
