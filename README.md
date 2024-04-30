@@ -433,20 +433,18 @@ onMount(() => {
 
 
 ### Reservation Page
-![Screenshot 2024-04-29 181544](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/15456996-44e8-48a2-800e-ddc0b572c723)
-
-
-
-
-
-
-
+<img width="902" alt="Screenshot 2024-04-29 211445" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/67eb82ce-0cf9-4474-9ba5-a2a1ab6914db">
+#### Once you have clicked the "reservations" text inside your profile settings modal, you will come to this page filled with all the reservations you have made. Each modal will contain the data you added when making the inital reservation so, the listing name, your name, date, location, and the amount you paid. When you hover over the listing it will reveal button actions to delete or edit the listing (listing will only allow name changing). When you also hover over the listing image you can navigate back to the specific listing you made the reservation with.
 #### You also see the reservation page AND API data in this file [MyReservation](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/myReservations)
 
 
-### Final Refinements and additions
-#### To finalize this project I decided to update and universalize my "notification" modals. These are modals that will display for various user interactions. This includes warnings, regular notifications, review submissions, and reservations. THey will look something like this:
+## Final Refinements and additions
+### Modals
+#### To finalize this project I decided to update and universalize my "notification" modals. These are modals that will display for various user interactions. This includes warnings, regular notifications, review submissions, and reservations. They will look something like this:
 ![Screenshot 2024-04-26 170206](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/2b658247-c551-4800-b4ba-2c17a5eb59b6)
 You can also view these modals here: [modal one and two component and store](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/airbnb)
 
-#### Finally the page will display animations on the login page and home page that give insight and additional information to users who login.
+### Login and homepage animations
+<img width="916" alt="Screenshot 2024-04-29 212356" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/0024a3f3-724c-40d7-9aab-5d7bdf205b7c">
+#### Finally, there are animations on the login page that give life to the page. There is also a small information icon to the bottom right for those who do not have GitHub to access the page. 
+#### The homepage will feature animations upon login to welcome the user with additional boxes with information that provide details to the various pages and are very fun.
