@@ -81,6 +81,34 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 ### Our first API endpoint will come in the form of a search bar.
 ![Screenshot 2024-04-29 185300](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/06db4844-7573-4004-bbe8-07071791492e)
 The search bar will allow you to search the names of restaurants and upon clicking on the magnifying glass icon will initiate the search feature and will search the database for your input.
+```
+JavaScript
+ // filters the restaurants based on your search
+async function findSearch() {
+    console.log(restaurantSearch)
+    const response = await fetch('api/food', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'search', search: restaurantSearch.toLowerCase() })
+    })
+    let data = await response.json()
+    currentAreas = data
+    restaurantSearch = ""
+    currentFilter = { type: 'search', search: restaurantSearch }
+}
+
+HTML
+<div class="relative basis-11/12">
+    <input bind:value={restaurantSearch} type="text" class="rounded-full w-full border-2 border-primary-600 pl-4 pr-12 py-2 bg- 
+       primary-300 focus:outline-none focus:ring-0 focus:border-primary-700 placeholder:text-primary-600" placeholder="Search 
+       for a restaurant..."/>
+    <button on:click={findSearch} class="absolute z-10 right-[1px] h-full">
+        <div class="fa-solid fa-magnifying-glass rounded-full bg-primary-700 hover:bg-primary-600 p-3"></div>
+    </button>
+</div>
+```
 
 #### To the right of that will be a heart icon that filters the restaurants based on your likes. So, you will be able to like restaurants and unlike but they will show in this filter when pressed.
 ![Screenshot 2024-04-10 222020](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9a8e8dcd-1044-4ec9-aa41-d01652f8ce28)
