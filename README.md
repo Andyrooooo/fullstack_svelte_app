@@ -265,6 +265,7 @@ HTML
 
 
 ### "Clear" Endpoint
+![Screenshot 2024-04-29 194103](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/8ba1f87c-99ad-4a17-88a5-02492d8b75e2)
 #### The clear (x) button which is located to the right of the "filter by" button will clear searches by re-fetching all data from the database.
 ```javascript
 JavaScript
