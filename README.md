@@ -79,7 +79,7 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 #### KEEP IN MIND - The data does not have images so they are dynamically placed into each restaurant at random, so the data will change but the images may not change.
 #### My API endpoints will span two pages. The first will be the "foods" page. In the navigation, if you click the "food" text it will bring you to the image above. The page will feature images (which will be dynamically placed with the information) with text featuring the restaurant name, address, and food type. You will also see a heart icon placed inside each image which will allow you to "like" the listing and save it to a selection of saved restaurants.
 
-### Our first API endpoint will come in the form of a search bar.
+### search bar enpoint:
 ![Screenshot 2024-04-29 185300](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/06db4844-7573-4004-bbe8-07071791492e)
 The search bar will allow you to search the names of restaurants and upon clicking on the magnifying glass icon will initiate the search feature and will search the database for your input.
 ```javascript
@@ -113,7 +113,7 @@ HTML
 ```
 
 
-### liked Restaurants Endpoint
+### liked Restaurants Endpoint:
 <img width="904" alt="Screenshot 2024-04-29 190554" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/8defde1e-a764-4a99-b02a-27677e2ab58f">
 
 #### To the right of the search endpoint will be the "liked" filter functionality. This button(with the heart) will grab all the restaurants you have liked from the database. This functionality is specific to you by your email so you will only see restaurants YOU liked. It corresponds to the heart you will see on each image and when clicked will add to your list of liked restaurants. You may also see below the second function "likeRestaurant" this function is when the user clicks the heart icon on the image. It will add their email to the specific document and base on the type of filter currently in use will allow it to refresh.
@@ -211,7 +211,7 @@ HTML
 ```
 
 
-### "Filter By" Endpoint
+### "Filter By" Endpoint:
 ![Screenshot 2024-04-29 192456](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/203da9b4-a2f4-4698-bab3-eb541025b1d6)
 #### This filter will be located to the right of the heart button. This endpoint will grab all the cuisine, street, and restaurant names from the database and put them into a filter modal. when you open a modal you can click and one of the options to filter the displayed restaurants with that filter to find all in the database that match its criteria.(due to size I have only included the HTML)
 ```html
@@ -264,9 +264,41 @@ HTML
 ```
 
 
-### "Clear" Endpoint
+### "Clear" Endpoint:
 ![Screenshot 2024-04-29 194103](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/8ba1f87c-99ad-4a17-88a5-02492d8b75e2)
 #### The clear (x) button which is located to the right of the "filter by" button will clear searches by re-fetching all data from the database.
+```javascript
+JavaScript
+// function to filter the restaurants by borough
+async function filterBorough(area: string) {
+
+    const response = await fetch('api/food', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'borough', borough: area })
+    })
+    let data = await response.json()
+    currentAreas = data
+    currentFilter = { type: 'borough', borough: area }
+}
+```
+```html
+HTML
+<div class="flex">
+    {#each areaList as area}
+        <button on:click={() => filterBorough(area)} class="flex border border-primary-600 py-1 px-2 m-1 rounded-full bg- 
+        primary-400 text-sm hover:border-primary-700">{area}</button>
+    {/each}
+</div>
+```
+
+
+
+### Borough filter button endpoints:
+![Screenshot 2024-04-29 201703](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/d3443f2a-6a93-4bbb-be7b-c3686440fef1)
+#### The borough filter buttons will be located just below the search bar. This functionality when clicked will filter the data based on its borough. Yes there are only a few but this is all the boroughs inside the database.
 ```javascript
 JavaScript
 // function to grab all the restaurants
@@ -285,17 +317,84 @@ HTML
     </button>
 </div>
 ```
-
-#### The last filtering capabilities will be below in the form of small buttons. These buttons will allow you to filter based on the borough, so, Manhattan, Brooklyn, and so on.
-![Screenshot 2024-04-10 222249](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/fe1221e5-0453-4c94-9176-04d8c15d53a2)
-
-#### In the next section, I made updates with API endpoints related to the AirBnB reservations. Within each dynamic route, you are able to make a reservation. (make sure you don't pick a date that's in the past and make sure your amount of nights match when selecting your dates or the app will remind you) 
-![Screenshot 2024-04-10 222432](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/141b83a4-3edc-4abf-8a5f-bb57c59ad145)
-#### Once the reservation has been made you may view this in your person settings modal at the top right of the screen with a link to also take you to the page. From there you can view all your reservations, make changes to the name on the reservation, and even delete unwanted reservations.
-![Screenshot 2024-04-10 222319](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/baa6beeb-5066-4457-bf82-b190cdc28c99)
-![Screenshot 2024-04-29 181544](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9459e016-9ae7-4f91-854c-5b7060aaa1fb)
-#### You may view the code in my "food/restaurants" section here: [food component](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/food)
+#### You can view the full code in my "food/restaurants" section here: [food component](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/food)
 #### The Food/restaurant API data will be available here: [Food API](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/api/food)
+
+
+
+
+## Making a reservation & Reservations page
+![Screenshot 2024-04-29 202513](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/2c26a9fb-5b80-4092-a261-c1425523d5c6)
+
+
+### Making a reservation
+![Screenshot 2024-04-29 202837](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/e8dd57d7-2364-4b9d-b117-b6cb069a6462)
+#### For additional endpoints and for the sake of finishing the "making a reservation" within each dynamic route I have built this component. If you navigate to any dynamic route so clicking the "listings" button in the navigation and selecting any listing you will stumble upon this reservation form. There is error handling so, dont worry about making any mistakes here. Upon completion of your reservation, you will be prompted with a notification that you have made a reservation and will also be notified of how to check your reservations. (unfortunately due to it's size I have only included the HTML)
+```html
+<form on:submit|preventDefault={sendReservation}>
+    <p class="mx-4"><a class="font-bold text-lg">${data?.body?.price}.00</a> night</p>
+
+    <div class="mx-4 mt-4 mb-8">
+        <label for="numberOfNights" class="text-primary-200 mb-1">{$page.data.session?.user?.name}, how many nights are you staying?</label>
+        <select name="nights" id="numberOfNights" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-800 focus:ring-0 " bind:value={numberOfNights} required>
+            <option class="bg-primary-300 text-primary-900" value="1">1 night</option>
+            <option class="bg-primary-300 text-primary-900" value="2">2 nights</option>
+            <option class="bg-primary-300 text-primary-900" value="3">3 nights</option>
+            <option class="bg-primary-300 text-primary-900" value="4">4 nights</option>
+            <option class="bg-primary-300 text-primary-900" value="5">5 nights</option>
+            <option class="bg-primary-300 text-primary-900" value="6">6 nights</option>
+            <option class="bg-primary-300 text-primary-900" value="7">7 nights</option>
+        </select>
+    </div>
+
+    <div class="mx-4 mt-4 mb-8 flex gap-4">
+        <div class="basis-6/12">
+            <label for="dates" class="text-primary-200 mb-1">Check In</label>
+            <input type="date" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-800 focus:ring-0 text-primary-900" bind:value={dates.start} required/>
+        </div>
+        <div class="basis-6/12">
+            <label for="dates" class="text-primary-200 mb-1">Check Out</label>
+            <input type="date" class="px-4 w-full rounded-lg bg-primary-300 border border-primary-400 focus:border-primary-800 focus:ring-0 text-primary-900" bind:value={dates.end} required/>
+        </div>
+    </div>
+
+    <div class="mx-4 mb-8">
+        <button class="py-2 w-full bg-primary-900 text-primary-50 rounded-lg hover:rounded-2xl transition-all duration-300" >Reserve</button>
+    </div>
+
+    <div class="flex justify-between px-4 py-2 text-primary-50">
+        <p>${data?.body?.price} x {numberOfNights} {numberOfNights > 1 ? "Nights" : "Night"}</p>
+        <p>${data?.body?.price * numberOfNights}</p>
+    </div>
+
+    <div class="flex justify-between px-4 py-2 text-primary-50">
+        <p>Cleaning Fee</p>
+        <p>${data?.body?.cleaning_fee}</p>
+    </div>
+
+    <div class="flex justify-between pt-2 px-4 text-primary-50">
+        <p>Airbnb Service Fee</p>
+        <p>$60</p>
+    </div>
+
+    <div class="flex justify-between pt-2 border-b border-primary-800 m-4 mt-2 pb-4 text-primary-50">
+        <p>Taxes</p>
+        <p>${(((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10).toFixed(2)}</p>
+    </div>
+
+    <div class="flex justify-between px-4 pb-4 text-primary-50">
+        <p>Total</p>
+        <p>${(((((data?.body?.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)) * .10)) + (data?.body.price * numberOfNights) + 60 + (data?.body?.cleaning_fee)).toFixed(2)}</p>
+    </div>
+</form>
+```
+
+
+
+### Checking your Reservation
+![Screenshot 2024-04-29 203954](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/b4a76d6c-bea8-4577-b8cd-11e11b79f8da)
+#### We are here
+
 #### You also see the reservation page AND API data in this file [MyReservation](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/myReservations)
 #### To also make sure the reservation notifications visible on the "person settings modal" there is also a second file with an api endpoint that gets called in all pages. This can be viewed here: [grabReservations](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/grabReservations)
 
