@@ -72,13 +72,16 @@
 You can also view the code here and I apologize for its size in advance [Dynamic route server, modal, and client-side code](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/listings/%5B_id%5D)
 
 
-## Adding API enpoints
+## Adding API endpoints
 ![Screenshot 2024-04-29 184059](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/0a19c5f4-fd12-4048-b026-85f4b5f472d1)
-![Screenshot 2024-04-29 181544](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9459e016-9ae7-4f91-854c-5b7060aaa1fb)
 
 #### KEEP IN MIND - The data does not have images so they are dynamically placed into each restaurant at random, so the data will change but the images may not change.
-#### For my API I thought it would make sense to use the restaurant sample data to go along with my AirBnB data. So, I have create a page where you are able to look at restaurants with an image, name, address, and type of food. For my endpoints to manipulate the data we have a search feature which will look for a name related to your search and display that result if there is a name. 
-![Screenshot 2024-04-10 222234](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/4de1fb19-1ac9-477a-afea-b3b4c05b8bf4)
+#### My API endpoints will span two pages. The first will be the "foods" page. In the navigation, if you click the "food" text it will bring you to the image above. The page will feature images (which will be dynamically placed with the information) with text featuring the restaurant name, address, and food type. You will also see a heart icon placed inside each image which will allow you to "like" the listing and save it to a selection of saved restaurants.
+
+#### Our first API endpoint will come in the form of a search bar.
+![Screenshot 2024-04-29 185300](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/06db4844-7573-4004-bbe8-07071791492e)
+The search bar will allow you to search the names of restaurants and upon clicking on the magnifying glass icon will initiate the search feature and will search the database for your input.
+
 #### To the right of that will be a heart icon that filters the restaurants based on your likes. So, you will be able to like restaurants and unlike but they will show in this filter when pressed.
 ![Screenshot 2024-04-10 222020](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9a8e8dcd-1044-4ec9-aa41-d01652f8ce28)
 ![Screenshot 2024-04-10 222213](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/3b5fcc84-dd3f-4a25-90b2-7b09964aa75e)
@@ -91,7 +94,7 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 ![Screenshot 2024-04-10 222432](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/141b83a4-3edc-4abf-8a5f-bb57c59ad145)
 #### Once the reservation has been made you may view this in your person settings modal at the top right of the screen with a link to also take you to the page. From there you can view all your reservations, make changes to the name on the reservation, and even delete unwanted reservations.
 ![Screenshot 2024-04-10 222319](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/baa6beeb-5066-4457-bf82-b190cdc28c99)
-![Screenshot 2024-04-10 222356](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/78d1d327-51a9-4a2c-bcac-5319e5a9e8d1)
+![Screenshot 2024-04-29 181544](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9459e016-9ae7-4f91-854c-5b7060aaa1fb)
 #### You may view the code in my "food/restaurants" section here: [food component](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/food)
 #### The Food/restaurant API data will be available here: [Food API](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/api/food)
 #### You also see the reservation page AND API data in this file [MyReservation](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/myReservations)
