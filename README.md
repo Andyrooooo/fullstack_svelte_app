@@ -17,7 +17,7 @@
 ![airbnb_sample_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/f6f60613-29bc-4853-808b-a5b0841b2b4f)
 ![dwdd_review_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/89668f84-f270-4dd2-b572-790f4b45cfc1)
 #### The form code will also look like this inside the dynamic route:
-```
+```html
 <form class=" w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
     <div class="w-full">
 
