@@ -1,17 +1,17 @@
 # DWDD 3780 Sveltekit Fullstack App
-#### Greetings!
+
 ![Screenshot 2024-04-29 163319](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/5f06079e-c333-4b58-8989-27f6996b60a6)
 
-
+#### Greetings!
 #### This is my fullstack app using Svelte. Upon connecting to the site you will be prompted to sign in with your GitHub account. You can view the Vercel site here: [Vercel](https://fullstack-svelte-app.vercel.app/). You can also view the link on the page under the 'about' section. You may also view the site at its final location on my domain [andrew-j-kester](https://www.andrew-j-kester.com/)
 
-### Master Detail Route Using MongoDB
+## Master Detail Route Using MongoDB
 ![Screenshot 2024-04-29 164318](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/76697220-158b-4ae5-9720-3de7dc86bdf3)
 
 #### I have created a master-detail route using the MongoDB sample data and utilized the 'AirBnB' data. The idea is when you click the "listing" button in the navigation it will take you to the listings page filled with neat cards. When you hover over a card it will prompt you to view the listing by clicking it which will take you to each dynamic route with lots of information for each listing. If you would like to view the code the link will be here [Listings Detail Route](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/listings)
 
 
-### Adding a form to action
+## Adding a form to action
 ![Screenshot 2024-04-29 165731](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/0103c8c6-8f5b-45ac-9b9a-24e6d3535768)
 #### For the "form to action" section I have added a "review" form. When you are in each dynamic route you will select "reviews" which will be highlighted. From there you will see the above modal filled with reviews and ratings of the listing. If you click the "want to add your own review", it will bring up a section to submit a review. When your review is submitted you will be able to view your review inside the list of existing reviews. When the form is submitted it will be sent to two separate collections, one for my personal collection and one to the AirBnB sample data.
 ![airbnb_sample_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/f6f60613-29bc-4853-808b-a5b0841b2b4f)
@@ -72,7 +72,7 @@
 You can also view the code here and I apologize for its size in advance [Dynamic route server, modal, and client-side code](https://github.com/Andyrooooo/fullstack_svelte_app/tree/master/src/routes/listings/%5B_id%5D)
 
 
-### Adding API enpoints
+## Adding API enpoints
 ![Screenshot 2024-04-29 184059](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/0a19c5f4-fd12-4048-b026-85f4b5f472d1)
 ![Screenshot 2024-04-29 181544](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9459e016-9ae7-4f91-854c-5b7060aaa1fb)
 
