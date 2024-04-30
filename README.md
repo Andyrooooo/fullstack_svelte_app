@@ -78,7 +78,7 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 #### KEEP IN MIND - The data does not have images so they are dynamically placed into each restaurant at random, so the data will change but the images may not change.
 #### My API endpoints will span two pages. The first will be the "foods" page. In the navigation, if you click the "food" text it will bring you to the image above. The page will feature images (which will be dynamically placed with the information) with text featuring the restaurant name, address, and food type. You will also see a heart icon placed inside each image which will allow you to "like" the listing and save it to a selection of saved restaurants.
 
-#### Our first API endpoint will come in the form of a search bar.
+### Our first API endpoint will come in the form of a search bar.
 ![Screenshot 2024-04-29 185300](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/06db4844-7573-4004-bbe8-07071791492e)
 The search bar will allow you to search the names of restaurants and upon clicking on the magnifying glass icon will initiate the search feature and will search the database for your input.
 
