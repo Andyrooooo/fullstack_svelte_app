@@ -112,12 +112,13 @@ HTML
 </div>
 ```
 
+
 ### liked Restaurants Endpoint
 <img width="904" alt="Screenshot 2024-04-29 190554" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/8defde1e-a764-4a99-b02a-27677e2ab58f">
 
 #### To the right of the search endpoint will be the "liked" filter functionality. This button(with the heart) will grab all the restaurants you have liked from the database. This functionality is specific to you by your email so you will only see restaurants YOU liked. It corresponds to the heart you will see on each image and when clicked will add to your list of liked restaurants.
 
-```
+```javascript
 JavaScript
 // filters the data by based if the object/document contains the user's email
 async function filterByLikes() {
@@ -132,7 +133,8 @@ async function filterByLikes() {
     currentAreas = data
     currentFilter = { type: 'likes', user: $page.data.session?.user?.email }
 }
-
+```
+```html
 HTML
 <button on:click={filterByLikes} class="w-full flex justify-center ml-2">
     <div class="text-2xl fa-solid fa-heart rounded-lg py-1 px-4 bg-primary-700 hover:bg-primary-600"></div>
@@ -148,6 +150,59 @@ HTML
 <img src={getRandomImage()} alt="logo" class="rounded-lg shadow-lg h-full object-cover "/>
 ![Screenshot 2024-04-10 222109](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/b1f07541-10a7-43aa-83fc-2cc105111b73)
 ```
+
+### "Filter By" Endpoint
+![Screenshot 2024-04-29 192456](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/203da9b4-a2f4-4698-bab3-eb541025b1d6)
+#### This filter will be located to the right of the heart button. This endpoint will grab all the cuisine, street, and restaurant names from the database and put them into a filter modal. when you open a modal you can click and one of the options to filter the displayed restaurants with that filter to find all in the database that match its criteria.
+```html
+HTML
+{#if filterOpen}
+    <div class="absolute z-10 top-12 right-14 bg-primary-700 rounded-lg border border-primary-600 w-72 shadow-lg text-primary-300">
+        
+        <div on:click={grabAllFoods} class="py-1 text-left hover:bg-primary-600 px-4 rounded-t-lg cursor-pointer">All</div>
+        
+        <!-- Custom list that when you select 'street' it will open the street list -->
+        <div class="text-left hover:bg-primary-600 py-1">
+            <div on:click={streetSelected} class="px-4 flex justify-between items-center cursor-pointer">
+                <p>Street</p>
+                <div class="fa-solid fa-chevron-down {rotateStreet} transition-all duration-300"></div>
+            </div>
+        </div>
+        <div class="{openStreetList} overflow-y-scroll transition-all duration-300">
+            {#each streetList as street}
+                <div on:click={filterByStreet(street)} class="px-8 py-1 text-left bg-primary-800 hover:bg-primary-600 cursor-pointer">{street}</div>
+            {/each}
+        </div>
+
+        <!-- Custom list that when you select 'cuisine' it will open the cuisine list -->
+        <div class="text-left hover:bg-primary-600 py-1">
+            <div on:click={cuisineSelected} class="px-4 flex justify-between items-center cursor-pointer">
+                <p>Cuisine</p>
+                <div class="fa-solid fa-chevron-down {rotateCuisine} transition-all duration-300"></div>
+            </div>
+        </div>
+        <div class="{openCuisineList} overflow-y-scroll transition-all duration-300">
+            {#each cuisineList as cuisine}
+                <div on:click={filterByCuisine(cuisine)} class="px-8 py-1 text-left bg-primary-800 hover:bg-primary-600 cursor-pointer">{cuisine}</div>
+            {/each}
+        </div>
+
+        <!-- Custom list that when you select 'name' it will open the name list -->
+        <div class="text-left hover:bg-primary-600 py-1 hover:rounded-b-lg">
+            <div on:click={nameSelected} class="px-4 flex justify-between items-center cursor-pointer">
+                <p>Name</p>
+                <div class="fa-solid fa-chevron-down {rotateName} transition-all duration-300"></div>
+            </div>
+        </div>
+        <div class="{openNameList} overflow-y-scroll transition-all duration-300">
+            {#each nameList as name}
+                <div on:click={filterByName(name)} class="px-8 py-1 text-left bg-primary-800 hover:bg-primary-600 cursor-pointer">{name}</div>
+            {/each}
+        </div>
+    </div>
+{/if}
+```
+
 
 #### The last filtering capabilities will be below in the form of small buttons. These buttons will allow you to filter based on the borough, so, Manhattan, Brooklyn, and so on.
 ![Screenshot 2024-04-10 222249](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/fe1221e5-0453-4c94-9176-04d8c15d53a2)
