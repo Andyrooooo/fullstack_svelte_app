@@ -110,11 +110,42 @@ HTML
 </div>
 ```
 
-#### To the right of that will be a heart icon that filters the restaurants based on your likes. So, you will be able to like restaurants and unlike but they will show in this filter when pressed.
-![Screenshot 2024-04-10 222020](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/9a8e8dcd-1044-4ec9-aa41-d01652f8ce28)
-![Screenshot 2024-04-10 222213](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/3b5fcc84-dd3f-4a25-90b2-7b09964aa75e)
-#### Next to the right of that will be a list filter functionality which will compile all restaurants into separate lists that you can filter from, this list includes all (all restaurants), street name, cuisine type, and restaurant type.
+### liked Restaurants Endpoint
+<img width="904" alt="Screenshot 2024-04-29 190554" src="https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/8defde1e-a764-4a99-b02a-27677e2ab58f">
+#### To the right of the search endpoint will be the "liked" filter functionality. This button(with the heart) will grab all the restaurants you have liked from the database. This functionality is specific to you by your email so you will only see restaurants YOU liked. It corresponds to the heart you will see on each image and when clicked will add to your list of liked restaurants.
+
+```
+JavaScript
+// filters the data by based if the object/document contains the user's email
+async function filterByLikes() {
+    const response = await fetch('api/food', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'likes', user: $page.data.session?.user?.email })
+    })
+    let data = await response.json()
+    currentAreas = data
+    currentFilter = { type: 'likes', user: $page.data.session?.user?.email }
+}
+
+HTML
+<button on:click={filterByLikes} class="w-full flex justify-center ml-2">
+    <div class="text-2xl fa-solid fa-heart rounded-lg py-1 px-4 bg-primary-700 hover:bg-primary-600"></div>
+</button>
+
+{#if area.likes && area?.likes.some(like => like?.user === $page.data.session?.user?.email)}
+    <button on:click={unlikeRestaurant(area, currentAreas)} class="fa-solid fa-heart absolute z-10 top-4 right-4 text-2xl bg- 
+     primary-700 px-2 py-1 rounded-full shadow-lg text-primary-300"></button>
+{:else}
+    <button on:click={likeRestaurant(area, currentAreas)} class="fa-regular fa-heart absolute z-10 top-4 right-4 text-2xl bg- 
+    primary-700 px-2 py-1 rounded-full shadow-lg text-primary-300"></button>
+{/if}
+<img src={getRandomImage()} alt="logo" class="rounded-lg shadow-lg h-full object-cover "/>
 ![Screenshot 2024-04-10 222109](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/b1f07541-10a7-43aa-83fc-2cc105111b73)
+```
+
 #### The last filtering capabilities will be below in the form of small buttons. These buttons will allow you to filter based on the borough, so, Manhattan, Brooklyn, and so on.
 ![Screenshot 2024-04-10 222249](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/fe1221e5-0453-4c94-9176-04d8c15d53a2)
 
