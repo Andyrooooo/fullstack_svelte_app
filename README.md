@@ -18,6 +18,7 @@
 ![dwdd_review_db](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/89668f84-f270-4dd2-b572-790f4b45cfc1)
 #### The form code will also look like this inside the dynamic route:
 ```html
+HTML
 <form class=" w-full h-full flex justify-center items-center p-4 " method="POST" action="?/submitForm">
     <div class="w-full">
 
@@ -81,7 +82,7 @@ You can also view the code here and I apologize for its size in advance [Dynamic
 ### Our first API endpoint will come in the form of a search bar.
 ![Screenshot 2024-04-29 185300](https://github.com/Andyrooooo/fullstack_svelte_app/assets/97576252/06db4844-7573-4004-bbe8-07071791492e)
 The search bar will allow you to search the names of restaurants and upon clicking on the magnifying glass icon will initiate the search feature and will search the database for your input.
-```
+```javascript
 JavaScript
  // filters the restaurants based on your search
 async function findSearch() {
@@ -98,7 +99,8 @@ async function findSearch() {
     restaurantSearch = ""
     currentFilter = { type: 'search', search: restaurantSearch }
 }
-
+```
+```html
 HTML
 <div class="relative basis-11/12">
     <input bind:value={restaurantSearch} type="text" class="rounded-full w-full border-2 border-primary-600 pl-4 pr-12 py-2 bg- 
